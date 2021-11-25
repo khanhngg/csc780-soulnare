@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -26,7 +28,9 @@ import com.csc780fall21.soulnareapplication.models.Song
 @Composable
 fun ProfileScreen() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
     ) {
         // TODO - add topbar?
         ProfileSection()
@@ -214,12 +218,8 @@ fun SongsSection() {
 
         // Content
         if (hasSongs) {
-            LazyColumn(
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                items(songs) { model ->
-                    SongItem(model = model)
-                }
+            songs.forEach { song ->
+                SongItem(model = song)
             }
         } else {
             Text(text = "No songs yet.")

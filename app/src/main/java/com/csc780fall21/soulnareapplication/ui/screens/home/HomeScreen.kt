@@ -62,6 +62,7 @@ fun ProfileSection() {
 
 @Composable
 fun GenresSection() {
+    var hasGenres = false
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         // Label
         Text(
@@ -71,12 +72,17 @@ fun GenresSection() {
         )
 
         // Content
-        Text(text = "Pop, Rock, Rap")
+        if (hasGenres) {
+            Text(text = "Pop, Rock, Rap")
+        } else {
+            Text(text = "No music genres yet.")
+        }
     }
 }
 
 @Composable
 fun ArtistsSection() {
+    var hasArtists = false
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         // Label
         Text(
@@ -85,22 +91,33 @@ fun ArtistsSection() {
             fontWeight = FontWeight.Bold
         )
 
+        // TODO - show text if no content
         // Content
-        Text(text = "Pop, Rock, Rap")
+        if (hasArtists) {
+            Text(text = "Pop, Rock, Rap")
+        } else {
+            Text(text = "No artists yet.")
+        }
     }
 }
 
 @Composable
 fun SongsSection() {
+    var hasSongs = false
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         // Label
         Text(
-            text = "Artists",
+            text = "Songs",
             style = MaterialTheme.typography.h6,
             fontWeight = FontWeight.Bold
         )
 
+        // TODO - show text if no content
         // Content
-        Text(text = "Pop, Rock, Rap")
+        if (hasSongs) {
+            Text(text = "Pop, Rock, Rap")
+        } else {
+            Text(text = "No songs yet.")
+        }
     }
 }

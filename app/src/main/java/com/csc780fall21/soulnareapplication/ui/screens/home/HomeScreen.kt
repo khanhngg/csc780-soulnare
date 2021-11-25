@@ -2,6 +2,10 @@ package com.csc780fall21.soulnareapplication.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -9,15 +13,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.csc780fall21.soulnareapplication.models.Artist
+import com.csc780fall21.soulnareapplication.models.Song
 
 @ExperimentalCoilApi
 @Composable
 fun HomeScreen() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
     ) {
         // TODO - add topbar?
         ProfileSection()
@@ -63,6 +72,7 @@ fun ProfileSection() {
 @Composable
 fun GenresSection() {
     var hasGenres = false
+
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         // Label
         Text(
@@ -80,13 +90,24 @@ fun GenresSection() {
     }
 }
 
+private val artists = mutableListOf<Artist>()
+
 @Composable
 fun ArtistsSection() {
-    var hasArtists = false
+    var hasArtists = true
+
+    // TODO
+    artists.add(Artist("Adele", ""))
+    artists.add(Artist("The Beatles", ""))
+    artists.add(Artist("Nirvana", ""))
+    artists.add(Artist("Radiohead", ""))
+    artists.add(Artist("Coldplay", ""))
+    artists.add(Artist("Beach Boys", ""))
+
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         // Label
         Text(
-            text = "Artists",
+            text = "Artist",
             style = MaterialTheme.typography.h6,
             fontWeight = FontWeight.Bold
         )
@@ -94,7 +115,16 @@ fun ArtistsSection() {
         // TODO - show text if no content
         // Content
         if (hasArtists) {
-            Text(text = "Pop, Rock, Rap")
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                items(artists) { model ->
+                    ArtistItem(model = model)
+                }
+            }
         } else {
             Text(text = "No artists yet.")
         }
@@ -102,8 +132,45 @@ fun ArtistsSection() {
 }
 
 @Composable
+fun ArtistItem(model: Artist) {
+    Column(
+        modifier = Modifier.padding(10.dp, 0.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // TODO - use avatar string
+        val painter =
+            rememberImagePainter(data = "https://firebasestorage.googleapis.com/v0/b/csc780-fall21-project.appspot.com/o/matthew-hamilton-tNCH0sKSZbA-unsplash.jpg?alt=media&token=3656bfa6-0047-4fd2-944b-ffdc4b44c7e0",
+                builder = {
+                    transformations(CircleCropTransformation())
+                })
+        Image(
+            painter = painter,
+            contentDescription = "Artist Picture",
+            modifier = Modifier.size(100.dp)
+        )
+        Text(
+            text = model.name,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Light
+        )
+    }
+}
+
+private val songs = mutableListOf<Song>()
+
+@Composable
 fun SongsSection() {
-    var hasSongs = false
+    var hasSongs = true
+
+    songs.add(Song("Easy on me", "Adele", ""))
+    songs.add(Song("Ok Computer", "Radiohead", ""))
+    songs.add(Song("Creep", "Radiohead", ""))
+    songs.add(Song("No Surprises", "Radiohead", ""))
+    songs.add(Song("Karma Police", "Radiohead", ""))
+    songs.add(Song("Hello", "Adele", ""))
+    songs.add(Song("Turning Tables", "Adele", ""))
+
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         // Label
         Text(
@@ -112,12 +179,48 @@ fun SongsSection() {
             fontWeight = FontWeight.Bold
         )
 
-        // TODO - show text if no content
         // Content
         if (hasSongs) {
-            Text(text = "Pop, Rock, Rap")
+            songs.forEach { song ->
+                SongItem(model = song)
+            }
         } else {
             Text(text = "No songs yet.")
+        }
+    }
+}
+
+@Composable
+fun SongItem(model: Song) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // TODO - use album cover string
+        val painter = rememberImagePainter(data = "https://firebasestorage.googleapis.com/v0/b/csc780-fall21-project.appspot.com/o/matthew-hamilton-tNCH0sKSZbA-unsplash.jpg?alt=media&token=3656bfa6-0047-4fd2-944b-ffdc4b44c7e0")
+        Image(
+            painter = painter,
+            contentDescription = "Album Cover Picture",
+            modifier = Modifier.size(100.dp)
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp, 0.dp),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = model.title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = model.artist,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Light
+            )
         }
     }
 }

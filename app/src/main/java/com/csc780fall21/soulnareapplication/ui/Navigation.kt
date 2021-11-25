@@ -9,6 +9,9 @@ import com.csc780fall21.soulnareapplication.ui.screens.likes.LikesScreen
 import com.csc780fall21.soulnareapplication.ui.screens.messages.MessagesScreen
 import com.csc780fall21.soulnareapplication.ui.screens.profile.ProfileScreen
 
+/*
+ * References: https://github.com/philipplackner/BottomNavWithBadges
+ */
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "home") {

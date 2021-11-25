@@ -14,9 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,11 +24,13 @@ import com.csc780fall21.soulnareapplication.ui.BottomNavItem
 import com.csc780fall21.soulnareapplication.ui.Navigation
 import com.csc780fall21.soulnareapplication.ui.theme.SoulnareApplicationTheme
 
+/*
+ * References: https://github.com/philipplackner/BottomNavWithBadges
+ */
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         setContent {
             SoulnareApplicationTheme() {
@@ -67,8 +66,13 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) {
-                    Navigation(navController = navController)
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        Navigation(navController = navController)
+                    }
+                    /*
+                    * References: https://stackoverflow.com/questions/66573601/bottom-nav-bar-overlaps-screen-content-in-jetpack-compose
+                    */
                 }
             }
         }

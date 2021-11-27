@@ -24,7 +24,7 @@ import com.csc780fall21.soulnareapplication.ui.BottomNavItem
 import com.csc780fall21.soulnareapplication.ui.Navigation
 import com.csc780fall21.soulnareapplication.ui.theme.SoulnareApplicationTheme
 
-/*
+/**
  * References: https://github.com/philipplackner/BottomNavWithBadges
  */
 class MainActivity : ComponentActivity() {
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(innerPadding)) {
                         Navigation(navController = navController)
                     }
-                    /*
+                    /**
                     * References: https://stackoverflow.com/questions/66573601/bottom-nav-bar-overlaps-screen-content-in-jetpack-compose
                     */
                 }

@@ -4,31 +4,44 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
+import coil.annotation.ExperimentalCoilApi
 import com.csc780fall21.soulnareapplication.ui.screens.home.HomeScreen
 import com.csc780fall21.soulnareapplication.ui.screens.likes.LikesScreen
+import com.csc780fall21.soulnareapplication.ui.screens.messages.MessageScreen
 import com.csc780fall21.soulnareapplication.ui.screens.messages.MessagesScreen
 import com.csc780fall21.soulnareapplication.ui.screens.profile.ProfileScreen
 
-/*
+/**
  * References: https://github.com/philipplackner/BottomNavWithBadges
  */
+@ExperimentalCoilApi
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            HomeScreen()
+            HomeScreen(navController)
         }
 
         composable("likes") {
-            LikesScreen()
+            LikesScreen(navController)
         }
 
-        composable("messages") {
-            MessagesScreen()
+        /**
+         * References: https://developer.android.com/jetpack/compose/navigation#nested-nav
+         */
+        navigation(startDestination = "messages", route = "messaging") {
+            composable("messages") {
+                MessagesScreen(navController)
+            }
+            // TODO - pass message id from view model???
+            composable("message") {
+                MessageScreen(navController)
+            }
         }
 
         composable("profile") {
-            ProfileScreen()
+            ProfileScreen(navController)
         }
     }
 }

@@ -7,4 +7,5 @@ data class User(
     val genres: String,
     val artists: String,
     val songs: String,
+    val messageIds: MutableList<Message>,
 )

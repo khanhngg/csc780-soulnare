@@ -93,10 +93,12 @@ fun LikesRow(model: User) {
             )
 
             // name
-            Text(
-                modifier = Modifier.padding(start = 10.dp),
-                text = model.name
-            )
+            model.firstName?.let {
+                Text(
+                    modifier = Modifier.padding(start = 10.dp),
+                    text = it
+                )
+            }
         }
 
         Row(

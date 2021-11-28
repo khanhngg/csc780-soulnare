@@ -14,17 +14,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
  * References: https://github.com/pradyotprksh/development_learning/tree/main/jetpack_compose/FlashChat
  */
+@ExperimentalCoroutinesApi
 @Composable
 fun RegisterScreen(
     home: () -> Unit,
     back: () -> Unit,
-    registerViewModel: RegisterViewModel = viewModel()
+    registerViewModel: RegisterViewModel = viewModel(
+        factory = RegisterViewModelFactory(UsersRepository())
+    ),
 ) {
+    val firstName: String by registerViewModel.firstName.observeAsState("")
+    val lastName: String by registerViewModel.lastName.observeAsState("")
     val email: String by registerViewModel.email.observeAsState("")
     val password: String by registerViewModel.password.observeAsState("")
     val loading: Boolean by registerViewModel.loading.observeAsState(initial = false)
@@ -52,6 +61,40 @@ fun RegisterScreen(
                         Icon(Icons.Filled.ArrowBack, null)
                     }
                 })
+
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { registerViewModel.updateFirstName(it) },
+                label = {
+                    Text("First Name")
+                },
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 5.dp)
+                    .fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text
+                ),
+                singleLine = true,
+                visualTransformation = VisualTransformation.None
+            )
+
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { registerViewModel.updateLastName(it) },
+                label = {
+                    Text("Last Name")
+                },
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 5.dp)
+                    .fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text
+                ),
+                singleLine = true,
+                visualTransformation = VisualTransformation.None
+            )
 
             OutlinedTextField(
                 value = email,
@@ -93,5 +136,19 @@ fun RegisterScreen(
                 Text("Register")
             }
         }
+    }
+}
+
+/**
+ * References: https://github.com/raipankaj/Bookish/blob/main/app/src/main/java/com/sample/jetbooks/MainActivity.kt
+ */
+@ExperimentalCoroutinesApi
+class RegisterViewModelFactory(private val usersRepository: UsersRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
+            return RegisterViewModel(usersRepository) as T
+        }
+
+        throw IllegalStateException()
     }
 }

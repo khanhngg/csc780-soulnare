@@ -302,5 +302,4 @@ class ProfileViewModelFactory(private val usersRepository: UsersRepository) : Vi
 
         throw IllegalStateException()
     }
-
 }

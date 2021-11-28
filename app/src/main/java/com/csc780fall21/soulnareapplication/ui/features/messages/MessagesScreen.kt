@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.ui.screens.messages
+package com.csc780fall21.soulnareapplication.ui.features.messages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.csc780fall21.soulnareapplication.models.Message
-import com.csc780fall21.soulnareapplication.models.User
+import com.csc780fall21.soulnareapplication.domain.model.Message
+import com.csc780fall21.soulnareapplication.domain.model.User
 
 @Composable
 fun MessagesScreen(navController: NavController) {
@@ -36,7 +36,7 @@ fun MessagesScreen(navController: NavController) {
     messages.add(Message("11", "1","heyyy", "Brandon", "Julia",  0))
 
     // current user
-    val user = User("Julia", "", 0, "", "", "", messages)
+    val user = User("Julia", "Julia", "Julia", "", 0, mutableListOf(),  mutableListOf(),  mutableListOf(),  mutableListOf(), messages)
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(

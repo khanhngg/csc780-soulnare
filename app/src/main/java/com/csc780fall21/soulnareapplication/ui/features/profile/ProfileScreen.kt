@@ -1,36 +1,67 @@
-package com.csc780fall21.soulnareapplication.ui.screens.profile
+package com.csc780fall21.soulnareapplication.ui.features.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.csc780fall21.soulnareapplication.models.Artist
-import com.csc780fall21.soulnareapplication.models.Song
+import com.csc780fall21.soulnareapplication.domain.model.*
+import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.asStateFlow
+import java.util.logging.Level.INFO
 
+@ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(
+    navController: NavController,
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModelFactory(UsersRepository())
+    ),
+) {
+    when (val userProfile = profileViewModel.userStateFlow.asStateFlow().collectAsState().value) {
+        is OnError -> {
+            Text(text = "Please try after sometime")
+        }
+
+        is OnSuccess -> {
+            val users = userProfile.querySnapshot?.toObjects(User::class.java)
+            users?.let {
+                Log.i("ProfileScreen", it.toString())
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
-        // TODO - add topbar?
+        TopAppBar(
+            elevation = 4.dp,
+            title = {
+                Text("Profile")
+            },
+            backgroundColor =  MaterialTheme.colors.primarySurface,
+        )
         ProfileSection()
         GenresSection()
         ArtistsSection()
@@ -258,4 +289,19 @@ fun SongItem(model: Song) {
             )
         }
     }
+}
+
+/**
+ * References: https://github.com/raipankaj/Bookish/blob/main/app/src/main/java/com/sample/jetbooks/MainActivity.kt
+ */
+@ExperimentalCoroutinesApi
+class ProfileViewModelFactory(private val usersRepository: UsersRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            return ProfileViewModel(usersRepository) as T
+        }
+
+        throw IllegalStateException()
+    }
+
 }

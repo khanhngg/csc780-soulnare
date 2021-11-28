@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.models
+package com.csc780fall21.soulnareapplication.domain.model
 
 data class Song(
     val title: String,

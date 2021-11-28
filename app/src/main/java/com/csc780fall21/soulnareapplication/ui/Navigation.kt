@@ -6,11 +6,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import coil.annotation.ExperimentalCoilApi
-import com.csc780fall21.soulnareapplication.ui.screens.home.HomeScreen
-import com.csc780fall21.soulnareapplication.ui.screens.likes.LikesScreen
-import com.csc780fall21.soulnareapplication.ui.screens.messages.MessageScreen
-import com.csc780fall21.soulnareapplication.ui.screens.messages.MessagesScreen
-import com.csc780fall21.soulnareapplication.ui.screens.profile.ProfileScreen
+import com.csc780fall21.soulnareapplication.ui.features.home.HomeScreen
+import com.csc780fall21.soulnareapplication.ui.features.likes.LikesScreen
+import com.csc780fall21.soulnareapplication.ui.features.messages.MessageScreen
+import com.csc780fall21.soulnareapplication.ui.features.messages.MessagesScreen
+import com.csc780fall21.soulnareapplication.ui.features.profile.ProfileScreen
 
 /**
  * References: https://github.com/philipplackner/BottomNavWithBadges

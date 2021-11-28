@@ -1,7 +1,6 @@
-package com.csc780fall21.soulnareapplication.ui.screens.likes
+package com.csc780fall21.soulnareapplication.ui.features.likes
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,17 +19,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.csc780fall21.soulnareapplication.models.User
+import com.csc780fall21.soulnareapplication.domain.model.User
 
 @Composable
 fun LikesScreen(navController: NavController) {
     val users = mutableListOf<User>()
-    users.add(User("John", "", 0, "", "", "", mutableListOf()))
-    users.add(User("Joe", "", 0, "", "", "", mutableListOf()))
-    users.add(User("David", "", 0, "", "", "", mutableListOf()))
-    users.add(User("Jerry", "", 0, "", "", "", mutableListOf()))
-    users.add(User("James", "", 0, "", "", "", mutableListOf()))
-    users.add(User("Mike", "", 0, "", "", "", mutableListOf()))
+//    users.add(User("John", "", 0, "", "", "", mutableListOf()))
+//    users.add(User("Joe", "", 0, "", "", "", mutableListOf()))
+//    users.add(User("David", "", 0, "", "", "", mutableListOf()))
+//    users.add(User("Jerry", "", 0, "", "", "", mutableListOf()))
+//    users.add(User("James", "", 0, "", "", "", mutableListOf()))
+//    users.add(User("Mike", "", 0, "", "", "", mutableListOf()))
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(

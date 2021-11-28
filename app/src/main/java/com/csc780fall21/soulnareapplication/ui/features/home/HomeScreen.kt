@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.ui.screens.home
+package com.csc780fall21.soulnareapplication.ui.features.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -18,8 +18,8 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.csc780fall21.soulnareapplication.models.Artist
-import com.csc780fall21.soulnareapplication.models.Song
+import com.csc780fall21.soulnareapplication.domain.model.Artist
+import com.csc780fall21.soulnareapplication.domain.model.Song
 
 @ExperimentalCoilApi
 @Composable

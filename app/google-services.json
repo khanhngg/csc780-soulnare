@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "471393416493",
+    "project_id": "csc780-fall21-project",
+    "storage_bucket": "csc780-fall21-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471393416493:android:8a846612549d9af166cfa4",
+        "android_client_info": {
+          "package_name": "com.csc780fall21.soulnare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471393416493-dkjag06eduvu91j38dhh77881ebco951.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAu5bdvGptYmggUUh4iFbcmoR96ii_QJIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471393416493-dkjag06eduvu91j38dhh77881ebco951.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471393416493:android:18169cc08ad02d7a66cfa4",
+        "android_client_info": {
+          "package_name": "com.csc780fall21.soulnareapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471393416493-dkjag06eduvu91j38dhh77881ebco951.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAu5bdvGptYmggUUh4iFbcmoR96ii_QJIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471393416493-dkjag06eduvu91j38dhh77881ebco951.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

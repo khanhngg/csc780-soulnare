@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.ui.features.profile
+package com.csc780fall21.soulnareapplication.view.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

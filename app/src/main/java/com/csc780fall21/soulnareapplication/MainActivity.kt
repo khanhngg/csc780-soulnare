@@ -20,17 +20,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
 import com.csc780fall21.soulnareapplication.ui.BottomNavItem
 import com.csc780fall21.soulnareapplication.ui.Navigation
 import com.csc780fall21.soulnareapplication.ui.theme.SoulnareApplicationTheme
+import com.google.firebase.FirebaseApp
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
  * References: https://github.com/philipplackner/BottomNavWithBadges
  */
+@ExperimentalCoilApi
+@ExperimentalCoroutinesApi
+@ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseApp.initializeApp(this)
 
         setContent {
             SoulnareApplicationTheme() {
@@ -68,6 +75,7 @@ class MainActivity : ComponentActivity() {
                     }
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
+                        // TODO - add user id here
                         Navigation(navController = navController)
                     }
                     /**

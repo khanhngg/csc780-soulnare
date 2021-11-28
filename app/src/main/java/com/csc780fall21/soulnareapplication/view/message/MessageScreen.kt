@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.ui.features.messages
+package com.csc780fall21.soulnareapplication.view.messages
 
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable

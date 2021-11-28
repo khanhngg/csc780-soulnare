@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.ui.features.home
+package com.csc780fall21.soulnareapplication.view.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

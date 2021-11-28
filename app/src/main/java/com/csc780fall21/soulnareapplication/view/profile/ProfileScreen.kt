@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.ui.features.profile
+package com.csc780fall21.soulnareapplication.view.profile
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -26,7 +26,6 @@ import com.csc780fall21.soulnareapplication.domain.model.*
 import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.logging.Level.INFO
 
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi

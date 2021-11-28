@@ -1,4 +1,4 @@
-package com.csc780fall21.soulnareapplication.ui.features.likes
+package com.csc780fall21.soulnareapplication.view.likes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border

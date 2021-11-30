@@ -8,8 +8,7 @@ data class User(
     val avatar: Int? = 0,
     val genres: List<String> = mutableListOf(),
     val artists: List<Map<String, String>> = mutableListOf(),
-    val songs: List<String> = mutableListOf(),
-    val songIDs: List<String> = mutableListOf(),
+    val songs: List<Map<String, String>> = mutableListOf(),
     val messageIds: MutableList<Message> = mutableListOf(),
 ) {
 //    constructor() : this("", "", "", "", 0, mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf())

@@ -1,6 +1,5 @@
 package com.csc780fall21.soulnareapplication.view.edit_profile
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -77,7 +76,7 @@ fun EditProfileSection(
     val artistSearchResults: Map<String, String> by editProfileViewModel.artistSearchResults.observeAsState(mutableMapOf())
 
     val songQuery: String by editProfileViewModel.songQuery.observeAsState("")
-    val songSearchResults: List<String> by editProfileViewModel.songSearchResults.observeAsState(mutableListOf())
+    val songSearchResults: Map<String, Map<String, String>> by editProfileViewModel.songSearchResults.observeAsState(mutableMapOf())
 
     when (field) {
         "genres" -> {
@@ -87,7 +86,7 @@ fun EditProfileSection(
                 searchResults = genreSearchResults,
                 updateQuery = { newValue -> editProfileViewModel.updateGenreQuery(newValue) },
                 search = { query -> editProfileViewModel.searchGenres(query = query) },
-                addItem = { value -> editProfileViewModel.addGenre(value)}
+                addItem = { value -> editProfileViewModel.addGenre(value) }
             )
         }
         "artists" -> {
@@ -97,17 +96,18 @@ fun EditProfileSection(
                 searchResults = artistSearchResults.keys.toList(),
                 updateQuery = { newValue -> editProfileViewModel.updateArtistQuery(newValue) },
                 search = { query -> editProfileViewModel.searchArtists(query = query) },
-                addItem = { value -> editProfileViewModel.addArtist(value)}
+                addItem = { value -> editProfileViewModel.addArtist(value) }
             )
         }
         else -> {
             SearchSection(
                 field = field,
                 query = songQuery,
-                searchResults = songSearchResults,
+                searchResults = songSearchResults.entries.map { it.value["uri"] },
+                resultsMap = songSearchResults,
                 updateQuery = { newValue -> editProfileViewModel.updateSongQuery(newValue) },
                 search = { query -> editProfileViewModel.searchSongs(query = query) },
-                addItem = { value -> editProfileViewModel.addSong(value)}
+                addItem = { value -> editProfileViewModel.addSong(value) }
             )
         }
     }
@@ -119,7 +119,8 @@ fun EditProfileSection(
 fun SearchSection(
     field: String?,
     query: String,
-    searchResults: List<String>,
+    searchResults: List<String?>,
+    resultsMap: Map<String, Map<String, String>>? = null,
     updateQuery: (String) -> Unit,
     search: (String) -> Unit,
     addItem: (String) -> Unit
@@ -173,8 +174,9 @@ fun SearchSection(
         LazyColumn {
             items(searchResults) { result ->
                 SearchResultItem(
-                    model = result,
-                    add = { result -> addItem(result) }
+                    model = result!!,
+                    add = { result -> addItem(result) },
+                    resultsMap = resultsMap
                 )
                 if (result !== "No results found") {
                     Divider(
@@ -191,17 +193,24 @@ fun SearchSection(
 @Composable
 fun SearchResultItem(
     model : String,
-    add: (String) -> Unit
+    add: (String) -> Unit,
+    resultsMap: Map<String, Map<String, String>>? = null,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+        val text: String = if (resultsMap != null) {
+            resultsMap[model]?.get("name")!!
+        } else {
+            model
+        }
         Text(
-            text = model,
+            text = text,
             modifier = Modifier.padding(start = 10.dp)
         )
+        // TODO - test
         if (model !== "No results found") {
             IconButton(onClick = {
                 add(model)

@@ -1,6 +1,5 @@
 package com.csc780fall21.soulnareapplication.view.edit_profile
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -36,15 +35,12 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
     private var _artistSearchResults = MutableLiveData(mapOf<String, String>())
     val artistSearchResults: LiveData<Map<String, String>> = _artistSearchResults
 
-//    private var _artistSearchResults = MutableLiveData(listOf<String>())
-//    val artistSearchResults: LiveData<List<String>> = _artistSearchResults
-//
     // Songs
     private val _songQuery = MutableLiveData("")
     val songQuery: LiveData<String> = _songQuery
 
-    private var _songSearchResults = MutableLiveData(listOf<String>())
-    val songSearchResults: LiveData<List<String>> = _songSearchResults
+    private var _songSearchResults = MutableLiveData(mapOf<String, Map<String, String>>())
+    val songSearchResults: LiveData<Map<String, Map<String, String>>> = _songSearchResults
 
     // Search
     fun searchGenres(query: String) {
@@ -78,8 +74,6 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
                 limit = 5,
                 market = Market.US
             )
-            Log.i("searchArtist....", "result: $result")
-            Log.i("searchArtist....image...", "result: ${result[0].images[0].url}")
 
             if (result.total > 0) {
                 val artists = mutableMapOf<String, String>()
@@ -88,6 +82,7 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
                 }
                 _artistSearchResults.value = artists
             } else {
+                // TODO - test
                 _artistSearchResults.value = mapOf("result" to "No results found")
             }
         }
@@ -97,20 +92,31 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
         viewModelScope.launch {
             val api = spotifyAppApi(CLIENT_ID, CLIENT_SECRET).build()
 
-            val result = api.search.searchArtist(
-                query = "genre:\"${query}\"",
-                limit = 5,
+            val result = api.search.searchTrack(
+                query = query,
+                limit = 2,
                 market = Market.US
             )
 
             if (result.total > 0) {
-                val genres = mutableListOf<String>()
-                result.forEach {
-                    genres.addAll(it!!.genres)
+                val songs = mutableMapOf<String, Map<String, String>>()
+                result.forEach { song ->
+                    val artistNames = mutableListOf<String>()
+                    song!!.artists.forEach {
+                        artistNames.add(it.name)
+                    }
+
+                    songs[song.uri.uri] = mapOf(
+                        "uri" to song.uri.uri,
+                        "name" to song.name,
+                        "artists" to artistNames.joinToString(),
+                        "imageUrl" to song.album.images[0].url,
+                    )
                 }
-                _genreSearchResults.value = genres.distinct().sorted().toMutableList()
+                _songSearchResults.value = songs
             } else {
-                _genreSearchResults.value = mutableListOf("No results found")
+                // TODO - test
+//                _songSearchResults.value = mutableListOf("No results found")
             }
         }
     }
@@ -145,7 +151,6 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
         val userUid = auth.currentUser?.uid
         val imgUrl = artistSearchResults.value?.get(artist)
         usersRepository.addUserArtist(userUid = userUid, newArtist = artist, artistImageUrl = imgUrl)
-        Log.i("addartist...", "artist=${artist}, img = ${imgUrl}")
 
         /**
          * References: https://github.com/googlecodelabs/android-compose-codelabs/blob/main/StateCodelab/start/src/main/java/com/codelabs/state/todo/TodoViewModel.kt
@@ -155,15 +160,19 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
         }
     }
 
-    fun addSong(genre: String) {
+    fun addSong(uri: String) {
         val userUid = auth.currentUser?.uid
-        usersRepository.addUserGenre(userUid = userUid, newGenre = genre)
+        val name = songSearchResults.value?.get(uri)?.get("name")
+        val artists = songSearchResults.value?.get(uri)?.get("artists")
+        val imgUrl = songSearchResults.value?.get(uri)?.get("imageUrl")
+
+        usersRepository.addUserSong(userUid = userUid, newSongUri = uri, newSongName = name!!, newSongImageUrl = imgUrl!!, newSongArtists = artists!!)
 
         /**
          * References: https://github.com/googlecodelabs/android-compose-codelabs/blob/main/StateCodelab/start/src/main/java/com/codelabs/state/todo/TodoViewModel.kt
          */
-        _genreSearchResults.value = _genreSearchResults.value!!.toMutableList().also {
-            it.remove(genre)
+        _songSearchResults.value = _songSearchResults.value!!.toMutableMap().also {
+            it.remove(uri)
         }
     }
 
@@ -173,6 +182,11 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
     }
 
     fun deleteArtist(artist: String, imageUrl: String) {
+        val userUid = auth.currentUser?.uid
+        usersRepository.removeUserArtist(userUid = userUid, artist = artist, imageUrl = imageUrl)
+    }
+
+    fun deleteSong(artist: String, imageUrl: String) {
         val userUid = auth.currentUser?.uid
         usersRepository.removeUserArtist(userUid = userUid, artist = artist, imageUrl = imageUrl)
     }

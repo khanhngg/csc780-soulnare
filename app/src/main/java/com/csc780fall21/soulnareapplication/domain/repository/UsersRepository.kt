@@ -81,11 +81,18 @@ class UsersRepository {
         }
     }
 
-    fun addUserSong(userUid: String?, newGenre: String) {
+    fun addUserSong(userUid: String?, newSongName: String, newSongUri: String, newSongArtists: String, newSongImageUrl: String) {
         val collection = firestore.collection("users")
         userUid.let {
             if (it != null) {
-                collection.document(it).update("genres", FieldValue.arrayUnion(newGenre))
+                collection.document(it).update(
+                    "songs",
+                    FieldValue.arrayUnion(mapOf(
+                        "name" to newSongName,
+                        "imageUrl" to newSongImageUrl,
+                        "artists" to newSongArtists,
+                        "uri" to newSongUri))
+                )
             }
         }
     }

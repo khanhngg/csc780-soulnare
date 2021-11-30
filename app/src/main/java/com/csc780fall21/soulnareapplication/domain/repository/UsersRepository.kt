@@ -2,6 +2,7 @@ package com.csc780fall21.soulnareapplication.domain.repository
 
 import com.csc780fall21.soulnareapplication.domain.model.OnError
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccess
+import com.csc780fall21.soulnareapplication.domain.model.OnSuccessQuery
 import com.csc780fall21.soulnareapplication.domain.model.User
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,6 +23,26 @@ class UsersRepository {
         val snapshotListener = collection.addSnapshotListener { snapshot, error ->
             val response = if (snapshot != null) {
                 OnSuccess(snapshot)
+            } else {
+                OnError(error)
+            }
+
+            trySend(response).isSuccess
+        }
+
+        awaitClose {
+            snapshotListener.remove()
+        }
+    }
+
+    fun getUserProfiles(userUid: String?) = callbackFlow {
+        val collection = firestore
+            .collection("users")
+            .whereNotEqualTo("uid", userUid)
+
+        val snapshotListener = collection.addSnapshotListener { snapshot, error ->
+            val response = if (error == null) {
+                OnSuccessQuery(snapshot)
             } else {
                 OnError(error)
             }

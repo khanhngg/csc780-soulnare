@@ -29,8 +29,4 @@ class ProfileViewModel(val usersRepository: UsersRepository) : ViewModel() {
             }
         }
     }
-
-//    fun getUserProfile() = usersRepository.getUserProfile()
-
-//    fun createUserProfile() = usersRepository.getUserProfile()
 }

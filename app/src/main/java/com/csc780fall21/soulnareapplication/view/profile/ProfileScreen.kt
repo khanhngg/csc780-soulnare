@@ -43,7 +43,7 @@ fun ProfileScreen(
     editProfileViewModel: EditProfileViewModel = viewModel(
         factory = EditProfileViewModelFactory(UsersRepository())
     ),
-    ) {
+) {
     when (val userProfile = profileViewModel.userStateFlow.asStateFlow().collectAsState().value) {
         is OnError -> {
             Text(text = "Please try after sometime")

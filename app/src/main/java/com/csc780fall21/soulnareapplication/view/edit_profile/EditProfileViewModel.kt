@@ -34,6 +34,8 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
 
     // Songs
 
+
+
     // Search
     fun searchGenre(query: String) {
         Log.i("searchGenre", "query is: $query")

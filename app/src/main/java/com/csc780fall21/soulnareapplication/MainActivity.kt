@@ -81,7 +81,6 @@ class MainActivity : ComponentActivity() {
                     }
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        // TODO - add user id here
                         Navigation(navController = navController)
                     }
                     /**
@@ -116,7 +115,7 @@ fun BottomNavigationBar(
             BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClick(item) },
-                selectedContentColor = Color(0xFF6EC49E),
+                selectedContentColor = MaterialTheme.colors.primary,
                 unselectedContentColor = Color(0xFFADB5BD),
                 icon = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -142,7 +141,7 @@ fun BottomNavigationBar(
  * References: https://stackoverflow.com/questions/66837991/hide-top-and-bottom-navigator-on-a-specific-screen-inside-scaffold-jetpack-compo
  */
 @Composable
-public fun currentRoute(navController: NavHostController): String? {
+fun currentRoute(navController: NavHostController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route
 }

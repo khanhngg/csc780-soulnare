@@ -2,7 +2,6 @@ package com.csc780fall21.soulnareapplication.view.profile
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -237,7 +236,9 @@ fun ArtistItem(
     editProfileViewModel: EditProfileViewModel,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(10.dp, 0.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp, 0.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
@@ -267,7 +268,7 @@ fun ArtistItem(
             onClick = {
                 editProfileViewModel.deleteArtist(artist = model["name"]!!, imageUrl = model["imageUrl"]!!)
         }) {
-            Icon(Icons.Default.Delete, null, tint = Color(0xFF495057))
+            Icon(Icons.Default.Delete, null)
         }
     }
 }
@@ -298,7 +299,7 @@ fun SongsSection(navController: NavController, user : User?, editProfileViewMode
         // Content
         if (user!!.songs.isNotEmpty()) {
             user.songs.forEach { song ->
-                SongItem(model = song)
+                SongItem(model = song, editProfileViewModel = editProfileViewModel)
             }
         } else {
             Text(text = "No songs yet.")
@@ -306,37 +307,53 @@ fun SongsSection(navController: NavController, user : User?, editProfileViewMode
     }
 }
 
+@ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
-fun SongItem(model: Map<String, String>) {
+fun SongItem(model: Map<String, String>, editProfileViewModel: EditProfileViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val painter = rememberImagePainter(data = model["imageUrl"])
-        Image(
-            painter = painter,
-            contentDescription = "Album Cover Picture",
-            modifier = Modifier.size(100.dp)
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp, 0.dp),
-            verticalArrangement = Arrangement.Center,
+        Row(
+            modifier = Modifier.fillMaxWidth(0.9f),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = model["name"]!!,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+            val painter = rememberImagePainter(data = model["imageUrl"])
+            Image(
+                painter = painter,
+                contentDescription = "Album Cover Picture",
+                modifier = Modifier.size(100.dp)
             )
-            Text(
-                text = model["artists"]!!,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Light
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp, 0.dp),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = model["name"]!!,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = model["artists"]!!,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light
+                )
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    editProfileViewModel.deleteSong(uri = model["uri"]!!, imageUrl = model["imageUrl"]!!, artists = model["artists"]!!, name = model["name"]!!)
+                }) {
+                Icon(Icons.Default.Delete, null)
+            }
         }
     }
 }

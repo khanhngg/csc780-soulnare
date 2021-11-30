@@ -97,11 +97,18 @@ class UsersRepository {
         }
     }
 
-    fun removeUserSong(userUid: String?, genre: String) {
+    fun removeUserSong(userUid: String?, uri: String, imageUrl: String, artists: String, name: String) {
         val collection = firestore.collection("users")
         userUid.let {
             if (it != null) {
-                collection.document(it).update("genres", FieldValue.arrayRemove(genre))
+                collection.document(it).update(
+                    "songs",
+                    FieldValue.arrayRemove(mapOf(
+                        "name" to name,
+                        "imageUrl" to imageUrl,
+                        "artists" to artists,
+                        "uri" to uri))
+                )
             }
         }
     }

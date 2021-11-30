@@ -1,5 +1,6 @@
 package com.csc780fall21.soulnareapplication.view.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -94,7 +95,7 @@ fun ProfileSection(user : User?) {
          */
         // profile picture
         val painter =
-            rememberImagePainter(data = user.avatar,
+            rememberImagePainter(data = user.avatar ?: User.DEFAULT_AVATAR_URL,
                 builder = {
                     transformations(CircleCropTransformation())
                 })
@@ -293,7 +294,7 @@ fun SongsSection(navController: NavController, user : User?, editProfileViewMode
         }
 
         // Content
-        if (user!!.songs.isNotEmpty()) {
+        if (user!!.songs.isNotEmpty() && user.songs[0].isNotEmpty()) {
             user.songs.forEach { song ->
                 SongItem(model = song, editProfileViewModel = editProfileViewModel)
             }

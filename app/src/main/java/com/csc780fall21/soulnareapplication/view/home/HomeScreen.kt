@@ -1,21 +1,23 @@
 package com.csc780fall21.soulnareapplication.view.home
 
 import android.util.Log
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,17 +43,6 @@ fun HomeScreen(
         factory = HomeViewModelFactory(UsersRepository())
     ),
 ) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .verticalScroll(rememberScrollState()),
-//    ) {
-//        ProfileSection()
-//        GenresSection()
-//        ArtistsSection()
-//        SongsSection()
-//    }
-
     when (val userProfiles = homeViewModel.usersStateFlow.asStateFlow().collectAsState().value) {
         is OnError -> {
             Text(text = "Please try after sometime")
@@ -61,16 +52,47 @@ fun HomeScreen(
             val users = userProfiles.querySnapshot?.toObjects(User::class.java)
 
             Log.i("homescreen...", "users: ${users}")
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                floatingActionButton = { FloatingActionButtons() }
             ) {
-                ProfileSection(user = users?.get(0))
-                GenresSection(navController, user = users?.get(0))
-                ArtistsSection(navController, user = users?.get(0))
-                SongsSection(navController, user = users?.get(0))
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    ProfileSection(user = users?.get(0))
+                    GenresSection(navController, user = users?.get(0))
+                    ArtistsSection(navController, user = users?.get(0))
+                    SongsSection(navController, user = users?.get(0))
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun FloatingActionButtons() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 30.dp, end = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround,
+    ) {
+        FloatingActionButton(
+            onClick = {},
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = Color.White
+        ){
+            Icon(Icons.Filled.ThumbDown,"Reject")
+        }
+        FloatingActionButton(
+            onClick = {},
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = Color.White
+        ){
+            Icon(Icons.Filled.ThumbUp,"Like")
         }
     }
 }
@@ -115,7 +137,7 @@ fun GenresSection(navController: NavController, user : User?) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.Start
         ) {
             // Label
             Text(
@@ -131,7 +153,6 @@ fun GenresSection(navController: NavController, user : User?) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 items(user.genres) { genre ->
                     GenreChip(
@@ -160,7 +181,6 @@ fun GenreChip(
         color = MaterialTheme.colors.primary
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

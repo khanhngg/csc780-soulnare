@@ -69,9 +69,18 @@ class RegisterViewModel(val usersRepository: UsersRepository) : ViewModel() {
                     }
                     _loading.value = false
 
-                    // TODO - create user to firestore
                     val uid = auth.currentUser?.uid
-                    val user = User(uid = uid, firstName = _firstName.value, lastName = _lastName.value, email = email)
+                    val user = User(
+                        uid = uid,
+                        firstName = _firstName.value,
+                        lastName = _lastName.value,
+                        email = email,
+                        genres = listOf(),
+                        artists = listOf(),
+                        songs = listOf(),
+                        messageIds = listOf(),
+                        avatar = null,
+                    )
                     usersRepository.createUserProfile(user = user)
                 }
         }

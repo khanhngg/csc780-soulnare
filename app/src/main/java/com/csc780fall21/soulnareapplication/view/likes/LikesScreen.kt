@@ -24,12 +24,6 @@ import com.csc780fall21.soulnareapplication.domain.model.User
 @Composable
 fun LikesScreen(navController: NavController) {
     val users = mutableListOf<User>()
-//    users.add(User("John", "", 0, "", "", "", mutableListOf()))
-//    users.add(User("Joe", "", 0, "", "", "", mutableListOf()))
-//    users.add(User("David", "", 0, "", "", "", mutableListOf()))
-//    users.add(User("Jerry", "", 0, "", "", "", mutableListOf()))
-//    users.add(User("James", "", 0, "", "", "", mutableListOf()))
-//    users.add(User("Mike", "", 0, "", "", "", mutableListOf()))
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
@@ -38,11 +32,7 @@ fun LikesScreen(navController: NavController) {
                 Text("Likes")
             },
             backgroundColor =  MaterialTheme.colors.primarySurface,
-            navigationIcon = {
-                IconButton(onClick = {/* Do Something*/ }) {
-                    Icon(Icons.Filled.ArrowBack, null)
-                }
-            })
+        )
 
         LazyColumn(
             modifier = Modifier

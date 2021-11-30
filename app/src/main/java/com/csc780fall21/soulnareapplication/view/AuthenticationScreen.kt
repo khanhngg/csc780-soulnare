@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.csc780fall21.soulnareapplication.ui.theme.SoulnareApplicationTheme
 
 /**
@@ -24,7 +25,12 @@ fun AuthenticationScreen(register: () -> Unit, login: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "Soulnare", modifier = Modifier.padding(bottom = 20.dp))
+                Text(
+                    text = "Soulnare",
+                    style = MaterialTheme.typography.h2,
+                    color = MaterialTheme.colors.primaryVariant,
+                    modifier = Modifier.padding(bottom = 20.dp)
+                )
 
                 Button(onClick = register) {
                     Text("Register")

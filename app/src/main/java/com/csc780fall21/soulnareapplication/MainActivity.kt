@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +33,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 /**
  * References: https://github.com/philipplackner/BottomNavWithBadges
  */
+@ExperimentalComposeUiApi
 @ExperimentalCoilApi
 @ExperimentalCoroutinesApi
 @ExperimentalMaterialApi
@@ -104,7 +106,7 @@ fun BottomNavigationBar(
     // draws the BottomNavigation composable
     BottomNavigation(
         modifier = modifier,
-        backgroundColor = Color.DarkGray,
+        backgroundColor = Color(0xFFF8F9FA),
         elevation = 5.dp
     ) {
         // iterates through items to draw each item as a BottomNavigationItem composable
@@ -114,8 +116,8 @@ fun BottomNavigationBar(
             BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClick(item) },
-                selectedContentColor = Color.White,
-                unselectedContentColor = Color.Gray,
+                selectedContentColor = Color(0xFF6EC49E),
+                unselectedContentColor = Color(0xFFADB5BD),
                 icon = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         // Display screen's icon

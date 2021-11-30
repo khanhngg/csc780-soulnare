@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -34,7 +33,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun EditProfileScreen(
     navController: NavController,
-    usersViewModel: EditProfileViewModel = viewModel(
+    editProfileViewModel: EditProfileViewModel = viewModel(
         factory = EditProfileViewModelFactory(UsersRepository())
     ),
 ) {
@@ -57,7 +56,7 @@ fun EditProfileScreen(
                     }
                 })
 
-            EditProfileSection(usersViewModel = usersViewModel)
+            EditProfileSection(editProfileViewModel = editProfileViewModel)
         }
     }
 }
@@ -65,9 +64,9 @@ fun EditProfileScreen(
 @ExperimentalComposeUiApi
 @ExperimentalCoroutinesApi
 @Composable
-fun EditProfileSection(usersViewModel: EditProfileViewModel) {
-    val genreQuery: String by usersViewModel.genreQuery.observeAsState("")
-    val genreSearchResults: List<String> by usersViewModel.genreSearchResult.observeAsState(listOf())
+fun EditProfileSection(editProfileViewModel: EditProfileViewModel) {
+    val genreQuery: String by editProfileViewModel.genreQuery.observeAsState("")
+    val genreSearchResults: List<String> by editProfileViewModel.genreSearchResult.observeAsState(mutableListOf())
 
     Column(
         modifier = Modifier
@@ -87,7 +86,7 @@ fun EditProfileSection(usersViewModel: EditProfileViewModel) {
                 val keyboardController = LocalSoftwareKeyboardController.current
                 TextField(
                     value = genreQuery,
-                    onValueChange = { newValue -> usersViewModel.updateGenreQuery(newValue) },
+                    onValueChange = { newValue -> editProfileViewModel.updateGenreQuery(newValue) },
                     label = {
                         Text("Search for genres")
                     },
@@ -106,7 +105,7 @@ fun EditProfileSection(usersViewModel: EditProfileViewModel) {
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            usersViewModel.searchGenre(genreQuery)
+                            editProfileViewModel.searchGenre(genreQuery)
                             keyboardController?.hide()
                         }
                     )
@@ -117,7 +116,7 @@ fun EditProfileSection(usersViewModel: EditProfileViewModel) {
         // Search results
         LazyColumn() {
             items(genreSearchResults) { result ->
-                SearchResultItem(model = result)
+                SearchResultItem(model = result, editProfileViewModel = editProfileViewModel)
                 if (result !== "No results found") {
                     Divider(
                         color = Color(0xFFF8F9FA),
@@ -126,15 +125,12 @@ fun EditProfileSection(usersViewModel: EditProfileViewModel) {
                 }
             }
         }
-
-
-        // Cancel button --> go back to ProfileScreen
-        // Save button
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
-fun SearchResultItem(model : String) {
+fun SearchResultItem(model : String, editProfileViewModel: EditProfileViewModel) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -145,7 +141,9 @@ fun SearchResultItem(model : String) {
             modifier = Modifier.padding(start = 10.dp)
         )
         if (model !== "No results found") {
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {
+                editProfileViewModel.addGenre(model)
+            }) {
                 Icon(Icons.Default.AddCircle, null, tint = Color(0xFF343A40))
             }
         }

@@ -3,6 +3,7 @@ package com.csc780fall21.soulnareapplication.domain.repository
 import com.csc780fall21.soulnareapplication.domain.model.OnError
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccess
 import com.csc780fall21.soulnareapplication.domain.model.User
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -36,5 +37,14 @@ class UsersRepository {
     fun createUserProfile(user: User) {
         val collection = firestore.collection("users")
         user.uid?.let { collection.document(it).set(user) }
+    }
+
+    fun addUserGenre(userUid: String?, newGenre: String) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("genres", FieldValue.arrayUnion(newGenre))
+            }
+        }
     }
 }

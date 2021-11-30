@@ -36,7 +36,7 @@ fun MessagesScreen(navController: NavController) {
     messages.add(Message("11", "1","heyyy", "Brandon", "Julia",  0))
 
     // current user
-    val user = User("","Julia", "Goldberg", "", 0, mutableListOf(),  mutableListOf(),  mutableListOf(),  mutableListOf())
+    val user = User("","Julia", "Goldberg", "", null, mutableListOf(),  mutableListOf(),  mutableListOf(),  mutableListOf())
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(

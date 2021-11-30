@@ -1,6 +1,5 @@
 package com.csc780fall21.soulnareapplication.view.profile
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -52,9 +51,6 @@ fun ProfileScreen(
 
         is OnSuccess -> {
             val user = userProfile.documentSnapshot?.toObject(User::class.java)
-            user?.let {
-                Log.i("ProfileScreen", it.toString())
-            }
 
             Column(
                 modifier = Modifier
@@ -98,7 +94,7 @@ fun ProfileSection(user : User?) {
          */
         // profile picture
         val painter =
-            rememberImagePainter(data = "https://firebasestorage.googleapis.com/v0/b/csc780-fall21-project.appspot.com/o/matthew-hamilton-tNCH0sKSZbA-unsplash.jpg?alt=media&token=3656bfa6-0047-4fd2-944b-ffdc4b44c7e0",
+            rememberImagePainter(data = user.avatar,
                 builder = {
                     transformations(CircleCropTransformation())
                 })

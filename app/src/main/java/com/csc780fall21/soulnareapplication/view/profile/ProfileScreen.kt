@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,35 +43,35 @@ fun ProfileScreen(
         }
 
         is OnSuccess -> {
-            val users = userProfile.querySnapshot?.toObjects(User::class.java)
-            users?.let {
+            val user = userProfile.documentSnapshot?.toObject(User::class.java)
+            user?.let {
                 Log.i("ProfileScreen", it.toString())
             }
-        }
-    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-    ) {
-        TopAppBar(
-            elevation = 4.dp,
-            title = {
-                Text("Profile")
-            },
-            backgroundColor =  MaterialTheme.colors.primarySurface,
-        )
-        ProfileSection()
-        GenresSection(navController)
-        ArtistsSection()
-        SongsSection()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                TopAppBar(
+                    elevation = 4.dp,
+                    title = {
+                        Text("Profile")
+                    },
+                    backgroundColor =  MaterialTheme.colors.primarySurface,
+                )
+                ProfileSection(user)
+                GenresSection(navController, user)
+                ArtistsSection()
+                SongsSection()
+            }
+        }
     }
 }
 
 @ExperimentalCoilApi
 @Composable
-fun ProfileSection() {
+fun ProfileSection(user : User?) {
     // user's name
     Column(
         modifier = Modifier
@@ -80,7 +81,7 @@ fun ProfileSection() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Julia Goldberg",
+            text = "${user!!.firstName} ${user.lastName}",
             style = MaterialTheme.typography.h4
         )
 
@@ -102,9 +103,7 @@ fun ProfileSection() {
 }
 
 @Composable
-fun GenresSection(navController: NavController) {
-    var hasGenres = false
-
+fun GenresSection(navController: NavController, user : User?) {
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         Row(
             modifier = Modifier
@@ -125,10 +124,45 @@ fun GenresSection(navController: NavController) {
         }
 
         // Content
-        if (hasGenres) {
-            Text(text = "Pop, Rock, Rap")
+        if (user!!.genres.isNotEmpty()) {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                items(user.genres) { genre ->
+                    GenreChip(
+                        genre = genre,
+                    )
+                }
+            }
         } else {
             Text(text = "No music genres yet.")
+        }
+    }
+}
+
+/**
+ * References: https://medium.com/@Rieger_san/create-a-chipgroup-with-jetpack-compose-f4744b94fa34
+ */
+@Composable
+fun GenreChip(
+    genre: String,
+) {
+    Surface(
+        modifier = Modifier.padding(4.dp),
+        elevation = 8.dp,
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colors.primary
+    ) {
+        Row {
+            Text(
+                text = genre,
+                style = MaterialTheme.typography.body2,
+                color = Color.White,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }

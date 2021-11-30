@@ -17,8 +17,8 @@ class UsersRepository {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    fun getUserProfile() = callbackFlow {
-        val collection = firestore.collection("users")
+    fun getUserProfile(userUid: String?) = callbackFlow {
+        val collection = firestore.collection("users").document(userUid!!)
         val snapshotListener = collection.addSnapshotListener { snapshot, error ->
             val response = if (snapshot != null) {
                 OnSuccess(snapshot)

@@ -47,12 +47,19 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
 
     // Search
     fun searchGenre(query: String) {
-        Log.i("searchGenre", "query is: $query")
         viewModelScope.launch {
             val api = spotifyAppApi("94696a0bca7a4cf1bfcd41f4e23fae37", "3681684773fa43d281fe2cb0ef6af12e").build()
-            val result = api.search.searchArtist("genre:\"${query}\"", limit = 2, market = Market.US)
-            Log.i("searchGenre api result:", result.toString())
-            _genreSearchResults.value = if (result.total > 0) result[0].genres else listOf("No results found")
+            val result = api.search.searchArtist("genre:\"${query}\"", limit = 5, market = Market.US)
+
+            if (result.total > 0) {
+                val genres = mutableListOf<String>()
+                result.forEach {
+                    genres.addAll(it!!.genres)
+                }
+                _genreSearchResults.value = genres.distinct().sorted()
+            } else {
+                _genreSearchResults.value = mutableListOf("No results found")
+            }
         }
     }
 

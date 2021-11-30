@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
@@ -44,34 +46,36 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 Scaffold(
                     bottomBar = {
-                        BottomNavigationBar(
-                            items = listOf(
-                                BottomNavItem(
-                                    name = "Home",
-                                    route = "home",
-                                    icon = Icons.Default.Home
+                        if (currentRoute(navController) != "edit-profile") {
+                            BottomNavigationBar(
+                                items = listOf(
+                                    BottomNavItem(
+                                        name = "Home",
+                                        route = "home",
+                                        icon = Icons.Default.Home
+                                    ),
+                                    BottomNavItem(
+                                        name = "Likes",
+                                        route = "likes",
+                                        icon = Icons.Default.Favorite
+                                    ),
+                                    BottomNavItem(
+                                        name = "Messages",
+                                        route = "messages",
+                                        icon = Icons.Default.Forum
+                                    ),
+                                    BottomNavItem(
+                                        name = "Profile",
+                                        route = "profile",
+                                        icon = Icons.Default.Person
+                                    ),
                                 ),
-                                BottomNavItem(
-                                    name = "Likes",
-                                    route = "likes",
-                                    icon = Icons.Default.Favorite
-                                ),
-                                BottomNavItem(
-                                    name = "Messages",
-                                    route = "messages",
-                                    icon = Icons.Default.Forum
-                                ),
-                                BottomNavItem(
-                                    name = "Profile",
-                                    route = "profile",
-                                    icon = Icons.Default.Person
-                                ),
-                            ),
-                            navController = navController,
-                            onItemClick = {
-                                navController.navigate(it.route)
-                            }
-                        )
+                                navController = navController,
+                                onItemClick = {
+                                    navController.navigate(it.route)
+                                }
+                            )
+                        }
                     }
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
@@ -130,4 +134,13 @@ fun BottomNavigationBar(
             )
         }
     }
+}
+
+/**
+ * References: https://stackoverflow.com/questions/66837991/hide-top-and-bottom-navigator-on-a-specific-screen-inside-scaffold-jetpack-compo
+ */
+@Composable
+public fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
 }

@@ -12,6 +12,7 @@ import com.csc780fall21.soulnareapplication.view.likes.LikesScreen
 import com.csc780fall21.soulnareapplication.view.login.LoginScreen
 import com.csc780fall21.soulnareapplication.view.messages.MessageScreen
 import com.csc780fall21.soulnareapplication.view.messages.MessagesScreen
+import com.csc780fall21.soulnareapplication.view.profile.EditProfileScreen
 import com.csc780fall21.soulnareapplication.view.profile.ProfileScreen
 import com.csc780fall21.soulnareapplication.view.register.RegisterScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -86,9 +87,13 @@ fun Navigation(navController: NavHostController) {
             }
         }
 
-        // TODO - pass user id here somehow
-        composable("profile") {
-            ProfileScreen(navController)
+        navigation(startDestination = "profile", route = "user-profile") {
+            composable("profile") {
+                ProfileScreen(navController)
+            }
+            composable("edit-profile") {
+                EditProfileScreen(navController)
+            }
         }
     }
 }

@@ -62,7 +62,7 @@ fun ProfileScreen(
             backgroundColor =  MaterialTheme.colors.primarySurface,
         )
         ProfileSection()
-        GenresSection()
+        GenresSection(navController)
         ArtistsSection()
         SongsSection()
     }
@@ -102,7 +102,7 @@ fun ProfileSection() {
 }
 
 @Composable
-fun GenresSection() {
+fun GenresSection(navController: NavController) {
     var hasGenres = false
 
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
@@ -119,7 +119,7 @@ fun GenresSection() {
             )
 
             // Button
-            TextButton(onClick = { /* Do something! */ }) {
+            TextButton(onClick = { navController.navigate("edit-profile") }) {
                 Text("Edit")
             }
         }

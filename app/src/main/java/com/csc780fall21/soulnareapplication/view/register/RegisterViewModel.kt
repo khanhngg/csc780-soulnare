@@ -74,7 +74,6 @@ class RegisterViewModel(val usersRepository: UsersRepository) : ViewModel() {
                     val user = User(uid = uid, firstName = _firstName.value, lastName = _lastName.value, email = email)
                     usersRepository.createUserProfile(user = user)
                 }
-
         }
     }
 }

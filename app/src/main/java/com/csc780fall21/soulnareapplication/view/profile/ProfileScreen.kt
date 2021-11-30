@@ -2,6 +2,7 @@ package com.csc780fall21.soulnareapplication.view.profile
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -10,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -69,7 +71,7 @@ fun ProfileScreen(
                 )
                 ProfileSection(user)
                 GenresSection(navController, user, editProfileViewModel)
-                ArtistsSection(navController)
+                ArtistsSection(navController, user, editProfileViewModel)
                 SongsSection(navController)
             }
         }
@@ -186,20 +188,10 @@ fun GenreChip(
     }
 }
 
-private val artists = mutableListOf<Artist>()
-
+@ExperimentalCoroutinesApi
+@ExperimentalCoilApi
 @Composable
-fun ArtistsSection(navController: NavController) {
-    var hasArtists = true
-
-    // TODO
-    artists.add(Artist("Adele", ""))
-    artists.add(Artist("The Beatles", ""))
-    artists.add(Artist("Nirvana", ""))
-    artists.add(Artist("Radiohead", ""))
-    artists.add(Artist("Coldplay", ""))
-    artists.add(Artist("Beach Boys", ""))
-
+fun ArtistsSection(navController: NavController, user : User?, editProfileViewModel: EditProfileViewModel) {
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         Row(
             modifier = Modifier
@@ -219,17 +211,16 @@ fun ArtistsSection(navController: NavController) {
             }
         }
 
-        // TODO - show text if no content
         // Content
-        if (hasArtists) {
+        if (user?.artists?.isNotEmpty() == true) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 10.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                items(artists) { model ->
-                    ArtistItem(model = model)
+                items(user.artists) { model ->
+                    ArtistItem(model = model, editProfileViewModel = editProfileViewModel)
                 }
             }
         } else {
@@ -238,29 +229,46 @@ fun ArtistsSection(navController: NavController) {
     }
 }
 
+@ExperimentalCoroutinesApi
+@ExperimentalCoilApi
 @Composable
-fun ArtistItem(model: Artist) {
-    Column(
-        modifier = Modifier.padding(10.dp, 0.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+fun ArtistItem(
+    model: Map<String, String>,
+    editProfileViewModel: EditProfileViewModel,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(10.dp, 0.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        // TODO - use avatar string
-        val painter =
-            rememberImagePainter(data = "https://firebasestorage.googleapis.com/v0/b/csc780-fall21-project.appspot.com/o/matthew-hamilton-tNCH0sKSZbA-unsplash.jpg?alt=media&token=3656bfa6-0047-4fd2-944b-ffdc4b44c7e0",
-                builder = {
-                    transformations(CircleCropTransformation())
-                })
-        Image(
-            painter = painter,
-            contentDescription = "Artist Picture",
-            modifier = Modifier.size(100.dp)
-        )
-        Text(
-            text = model.name,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Light
-        )
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val painter =
+                rememberImagePainter(data = model["imageUrl"]!!,
+                    builder = {
+                        transformations(CircleCropTransformation())
+                    })
+            Image(
+                painter = painter,
+                contentDescription = "Artist Picture",
+                modifier = Modifier.size(100.dp)
+            )
+            Text(
+                text = model["name"]!!,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Light
+            )
+        }
+
+        IconButton(
+            modifier = Modifier.size(24.dp),
+            onClick = {
+                editProfileViewModel.deleteArtist(artist = model["name"]!!, imageUrl = model["imageUrl"]!!)
+        }) {
+            Icon(Icons.Default.Delete, null, tint = Color(0xFF495057))
+        }
     }
 }
 

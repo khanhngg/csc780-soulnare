@@ -172,6 +172,11 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
         usersRepository.removeUserGenre(userUid = userUid, genre = genre)
     }
 
+    fun deleteArtist(artist: String, imageUrl: String) {
+        val userUid = auth.currentUser?.uid
+        usersRepository.removeUserArtist(userUid = userUid, artist = artist, imageUrl = imageUrl)
+    }
+
     // Constants
     companion object {
         private const val CLIENT_ID = "94696a0bca7a4cf1bfcd41f4e23fae37"

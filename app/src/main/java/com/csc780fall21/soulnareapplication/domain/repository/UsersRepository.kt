@@ -63,16 +63,20 @@ class UsersRepository {
             if (it != null) {
                 collection.document(it).update(
                     "artists",
-                    FieldValue.arrayUnion(mapOf("name" to newArtist, "imageUrl" to artistImageUrl)))
+                    FieldValue.arrayUnion(mapOf("name" to newArtist, "imageUrl" to artistImageUrl))
+                )
             }
         }
     }
 
-    fun removeUserArtist(userUid: String?, genre: String) {
+    fun removeUserArtist(userUid: String?, artist: String, imageUrl: String) {
         val collection = firestore.collection("users")
         userUid.let {
             if (it != null) {
-                collection.document(it).update("genres", FieldValue.arrayRemove(genre))
+                collection.document(it).update(
+                    "artists",
+                    FieldValue.arrayRemove(mapOf("name" to artist, "imageUrl" to imageUrl))
+                )
             }
         }
     }

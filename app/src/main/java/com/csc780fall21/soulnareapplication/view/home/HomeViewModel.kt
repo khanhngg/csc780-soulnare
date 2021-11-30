@@ -26,4 +26,19 @@ class HomeViewModel(val usersRepository: UsersRepository) : ViewModel() {
             }
         }
     }
+
+    fun updateUsersToShow() {
+
+    }
+
+    fun addUserToYourLikes(otherUserUid: String) {
+        val userUid = auth.currentUser?.uid
+        usersRepository.addUserToLikes(userUid = userUid, otherUserUid = otherUserUid)
+    }
+
+    fun addUserToYourRejects(otherUserUid: String) {
+        val userUid = auth.currentUser?.uid
+        usersRepository.addUserToReject(userUid = userUid, otherUserUid = otherUserUid)
+    }
+
 }

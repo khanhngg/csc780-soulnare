@@ -1,5 +1,6 @@
 package com.csc780fall21.soulnareapplication.domain.repository
 
+import android.util.Log
 import com.csc780fall21.soulnareapplication.domain.model.OnError
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccess
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccessQuery
@@ -36,9 +37,32 @@ class UsersRepository {
     }
 
     fun getUserProfiles(userUid: String?) = callbackFlow {
+        val currentUser = firestore.collection("users").document(userUid!!)
+        val youLikeUserIds = mutableListOf<Any?>()
+        val youRejectUserIds = mutableListOf<Any?>()
+
+        currentUser.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                    youLikeUserIds.add(document.data?.get("youLikeUserIds"))
+                    youRejectUserIds.add(document.data?.get("youRejectUserIds"))
+                } else {
+                    Log.d(TAG, "No such document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+            }
+
+        Log.d(TAG, "DocumentSnapshot youLikeUserIds: ${youLikeUserIds}")
+        Log.d(TAG, "DocumentSnapshot youRejectUserIds: ${youRejectUserIds}")
+
         val collection = firestore
             .collection("users")
             .whereNotEqualTo("uid", userUid)
+            .whereNotIn("youRejectUserIds", youRejectUserIds)
+            .whereNotIn("youLikeUserIds", youLikeUserIds)
 
         val snapshotListener = collection.addSnapshotListener { snapshot, error ->
             val response = if (error == null) {
@@ -132,5 +156,28 @@ class UsersRepository {
                 )
             }
         }
+    }
+
+    fun addUserToLikes(userUid: String?, otherUserUid: String?) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("youLikeUserIds", FieldValue.arrayUnion(otherUserUid))
+            }
+        }
+    }
+
+    fun addUserToReject(userUid: String?, otherUserUid: String?) {
+        // TODO - edge case -- also need to remove from previously added to youLikeUserIds
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("youRejectUserIds", FieldValue.arrayUnion(otherUserUid))
+            }
+        }
+    }
+
+    companion object {
+        const val TAG = "UsersRepository"
     }
 }

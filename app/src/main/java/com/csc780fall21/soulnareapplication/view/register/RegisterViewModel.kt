@@ -80,6 +80,9 @@ class RegisterViewModel(val usersRepository: UsersRepository) : ViewModel() {
                         songs = listOf(),
                         messageIds = listOf(),
                         avatar = null,
+                        youLikeUserIds = listOf(),
+                        youRejectUserIds = listOf(),
+                        likeUserIds = listOf(),
                     )
                     usersRepository.createUserProfile(user = user)
                 }

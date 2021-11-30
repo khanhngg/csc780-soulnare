@@ -7,6 +7,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -116,10 +118,12 @@ fun EditProfileSection(usersViewModel: EditProfileViewModel) {
         LazyColumn() {
             items(genreSearchResults) { result ->
                 SearchResultItem(model = result)
-                Divider(
-                    color = Color.LightGray,
-                    thickness = 1.dp,
-                )
+                if (result !== "No results found") {
+                    Divider(
+                        color = Color(0xFFF8F9FA),
+                        thickness = 1.dp,
+                    )
+                }
             }
         }
 
@@ -131,7 +135,21 @@ fun EditProfileSection(usersViewModel: EditProfileViewModel) {
 
 @Composable
 fun SearchResultItem(model : String) {
-    Text(text = model)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = model,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+        if (model !== "No results found") {
+            IconButton(onClick = {  }) {
+                Icon(Icons.Default.AddCircle, null, tint = Color(0xFF343A40))
+            }
+        }
+    }
 }
 
 /**

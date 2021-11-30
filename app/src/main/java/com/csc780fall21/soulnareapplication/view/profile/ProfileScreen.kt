@@ -72,7 +72,7 @@ fun ProfileScreen(
                 ProfileSection(user)
                 GenresSection(navController, user, editProfileViewModel)
                 ArtistsSection(navController, user, editProfileViewModel)
-                SongsSection(navController)
+                SongsSection(navController, user, editProfileViewModel)
             }
         }
     }
@@ -272,20 +272,10 @@ fun ArtistItem(
     }
 }
 
-private val songs = mutableListOf<Song>()
-
+@ExperimentalCoilApi
+@ExperimentalCoroutinesApi
 @Composable
-fun SongsSection(navController: NavController) {
-    var hasSongs = true
-
-    songs.add(Song("Easy on me", "Adele", ""))
-    songs.add(Song("Ok Computer", "Radiohead", ""))
-    songs.add(Song("Creep", "Radiohead", ""))
-    songs.add(Song("No Surprises", "Radiohead", ""))
-    songs.add(Song("Karma Police", "Radiohead", ""))
-    songs.add(Song("Hello", "Adele", ""))
-    songs.add(Song("Turning Tables", "Adele", ""))
-
+fun SongsSection(navController: NavController, user : User?, editProfileViewModel: EditProfileViewModel) {
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         Row(
             modifier = Modifier
@@ -306,8 +296,8 @@ fun SongsSection(navController: NavController) {
         }
 
         // Content
-        if (hasSongs) {
-            songs.forEach { song ->
+        if (user!!.songs.isNotEmpty()) {
+            user.songs.forEach { song ->
                 SongItem(model = song)
             }
         } else {
@@ -316,16 +306,16 @@ fun SongsSection(navController: NavController) {
     }
 }
 
+@ExperimentalCoilApi
 @Composable
-fun SongItem(model: Song) {
+fun SongItem(model: Map<String, String>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // TODO - use album cover string
-        val painter = rememberImagePainter(data = "https://firebasestorage.googleapis.com/v0/b/csc780-fall21-project.appspot.com/o/matthew-hamilton-tNCH0sKSZbA-unsplash.jpg?alt=media&token=3656bfa6-0047-4fd2-944b-ffdc4b44c7e0")
+        val painter = rememberImagePainter(data = model["imageUrl"])
         Image(
             painter = painter,
             contentDescription = "Album Cover Picture",
@@ -338,12 +328,12 @@ fun SongItem(model: Song) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = model.title,
+                text = model["name"]!!,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
             Text(
-                text = model.artist,
+                text = model["artists"]!!,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light
             )

@@ -7,7 +7,7 @@ data class User(
     val email: String? = "",
     val avatar: Int? = 0,
     val genres: List<String> = mutableListOf(),
-    val artists: List<String> = mutableListOf(),
+    val artists: List<Map<String, String>> = mutableListOf(),
     val songs: List<String> = mutableListOf(),
     val songIDs: List<String> = mutableListOf(),
     val messageIds: MutableList<Message> = mutableListOf(),

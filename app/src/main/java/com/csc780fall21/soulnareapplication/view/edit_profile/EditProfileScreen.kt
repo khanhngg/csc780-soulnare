@@ -1,5 +1,6 @@
 package com.csc780fall21.soulnareapplication.view.edit_profile
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +34,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun EditProfileScreen(
     navController: NavController,
+    field: String? = "genres",
     editProfileViewModel: EditProfileViewModel = viewModel(
         factory = EditProfileViewModelFactory(UsersRepository())
     ),
@@ -47,7 +49,7 @@ fun EditProfileScreen(
             TopAppBar(
                 elevation = 4.dp,
                 title = {
-                    Text("Edit Profile")
+                    Text("Edit ${field}")
                 },
                 backgroundColor =  MaterialTheme.colors.primarySurface,
                 navigationIcon = {
@@ -56,7 +58,7 @@ fun EditProfileScreen(
                     }
                 })
 
-            EditProfileSection(editProfileViewModel = editProfileViewModel)
+            EditProfileSection(editProfileViewModel = editProfileViewModel, field = field)
         }
     }
 }
@@ -64,10 +66,64 @@ fun EditProfileScreen(
 @ExperimentalComposeUiApi
 @ExperimentalCoroutinesApi
 @Composable
-fun EditProfileSection(editProfileViewModel: EditProfileViewModel) {
+fun EditProfileSection(
+    editProfileViewModel: EditProfileViewModel,
+    field: String? = "genres"
+) {
     val genreQuery: String by editProfileViewModel.genreQuery.observeAsState("")
-    val genreSearchResults: List<String> by editProfileViewModel.genreSearchResult.observeAsState(mutableListOf())
+    val genreSearchResults: List<String> by editProfileViewModel.genreSearchResults.observeAsState(mutableListOf())
 
+    val artistQuery: String by editProfileViewModel.artistQuery.observeAsState("")
+    val artistSearchResults: Map<String, String> by editProfileViewModel.artistSearchResults.observeAsState(mutableMapOf())
+
+    val songQuery: String by editProfileViewModel.songQuery.observeAsState("")
+    val songSearchResults: List<String> by editProfileViewModel.songSearchResults.observeAsState(mutableListOf())
+
+    when (field) {
+        "genres" -> {
+            SearchSection(
+                field = field,
+                query = genreQuery,
+                searchResults = genreSearchResults,
+                updateQuery = { newValue -> editProfileViewModel.updateGenreQuery(newValue) },
+                search = { query -> editProfileViewModel.searchGenres(query = query) },
+                addItem = { value -> editProfileViewModel.addGenre(value)}
+            )
+        }
+        "artists" -> {
+            SearchSection(
+                field = field,
+                query = artistQuery,
+                searchResults = artistSearchResults.keys.toList(),
+                updateQuery = { newValue -> editProfileViewModel.updateArtistQuery(newValue) },
+                search = { query -> editProfileViewModel.searchArtists(query = query) },
+                addItem = { value -> editProfileViewModel.addArtist(value)}
+            )
+        }
+        else -> {
+            SearchSection(
+                field = field,
+                query = songQuery,
+                searchResults = songSearchResults,
+                updateQuery = { newValue -> editProfileViewModel.updateSongQuery(newValue) },
+                search = { query -> editProfileViewModel.searchSongs(query = query) },
+                addItem = { value -> editProfileViewModel.addSong(value)}
+            )
+        }
+    }
+}
+
+@ExperimentalCoroutinesApi
+@ExperimentalComposeUiApi
+@Composable
+fun SearchSection(
+    field: String?,
+    query: String,
+    searchResults: List<String>,
+    updateQuery: (String) -> Unit,
+    search: (String) -> Unit,
+    addItem: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -85,10 +141,10 @@ fun EditProfileSection(editProfileViewModel: EditProfileViewModel) {
                  */
                 val keyboardController = LocalSoftwareKeyboardController.current
                 TextField(
-                    value = genreQuery,
-                    onValueChange = { newValue -> editProfileViewModel.updateGenreQuery(newValue) },
+                    value = query,
+                    onValueChange = { newValue -> updateQuery(newValue) },
                     label = {
-                        Text("Search for genres")
+                        Text("Search for $field")
                     },
                     maxLines = 1,
                     modifier = Modifier
@@ -105,7 +161,7 @@ fun EditProfileSection(editProfileViewModel: EditProfileViewModel) {
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            editProfileViewModel.searchGenre(genreQuery)
+                            search(query)
                             keyboardController?.hide()
                         }
                     )
@@ -114,9 +170,12 @@ fun EditProfileSection(editProfileViewModel: EditProfileViewModel) {
         }
 
         // Search results
-        LazyColumn() {
-            items(genreSearchResults) { result ->
-                SearchResultItem(model = result, editProfileViewModel = editProfileViewModel)
+        LazyColumn {
+            items(searchResults) { result ->
+                SearchResultItem(
+                    model = result,
+                    add = { result -> addItem(result) }
+                )
                 if (result !== "No results found") {
                     Divider(
                         color = Color(0xFFF8F9FA),
@@ -130,7 +189,10 @@ fun EditProfileSection(editProfileViewModel: EditProfileViewModel) {
 
 @ExperimentalCoroutinesApi
 @Composable
-fun SearchResultItem(model : String, editProfileViewModel: EditProfileViewModel) {
+fun SearchResultItem(
+    model : String,
+    add: (String) -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -142,7 +204,7 @@ fun SearchResultItem(model : String, editProfileViewModel: EditProfileViewModel)
         )
         if (model !== "No results found") {
             IconButton(onClick = {
-                editProfileViewModel.addGenre(model)
+                add(model)
             }) {
                 Icon(Icons.Default.AddCircle, null, tint = Color(0xFF343A40))
             }

@@ -93,8 +93,11 @@ fun Navigation(navController: NavHostController) {
             composable("profile") {
                 ProfileScreen(navController)
             }
-            composable("edit-profile") {
-                EditProfileScreen(navController)
+//            composable("edit-profile") {
+//                EditProfileScreen(navController)
+//            }
+            composable("edit-profile/{field}") { backStackEntry ->
+                EditProfileScreen(navController = navController, field = backStackEntry.arguments?.getString("field"))
             }
         }
     }

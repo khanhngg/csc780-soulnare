@@ -56,4 +56,42 @@ class UsersRepository {
             }
         }
     }
+
+    fun addUserArtist(userUid: String?, newArtist: String, artistImageUrl: String?) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update(
+                    "artists",
+                    FieldValue.arrayUnion(mapOf("name" to newArtist, "imageUrl" to artistImageUrl)))
+            }
+        }
+    }
+
+    fun removeUserArtist(userUid: String?, genre: String) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("genres", FieldValue.arrayRemove(genre))
+            }
+        }
+    }
+
+    fun addUserSong(userUid: String?, newGenre: String) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("genres", FieldValue.arrayUnion(newGenre))
+            }
+        }
+    }
+
+    fun removeUserSong(userUid: String?, genre: String) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("genres", FieldValue.arrayRemove(genre))
+            }
+        }
+    }
 }

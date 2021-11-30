@@ -69,8 +69,8 @@ fun ProfileScreen(
                 )
                 ProfileSection(user)
                 GenresSection(navController, user, editProfileViewModel)
-                ArtistsSection()
-                SongsSection()
+                ArtistsSection(navController)
+                SongsSection(navController)
             }
         }
     }
@@ -126,7 +126,7 @@ fun GenresSection(navController: NavController, user : User?, editProfileViewMod
             )
 
             // Button
-            TextButton(onClick = { navController.navigate("edit-profile") }) {
+            TextButton(onClick = { navController.navigate("edit-profile/genres") }) {
                 Text("Edit")
             }
         }
@@ -189,7 +189,7 @@ fun GenreChip(
 private val artists = mutableListOf<Artist>()
 
 @Composable
-fun ArtistsSection() {
+fun ArtistsSection(navController: NavController) {
     var hasArtists = true
 
     // TODO
@@ -214,7 +214,7 @@ fun ArtistsSection() {
             )
 
             // Button
-            TextButton(onClick = { /* Do something! */ }) {
+            TextButton(onClick = { navController.navigate("edit-profile/artists") }) {
                 Text("Edit")
             }
         }
@@ -267,7 +267,7 @@ fun ArtistItem(model: Artist) {
 private val songs = mutableListOf<Song>()
 
 @Composable
-fun SongsSection() {
+fun SongsSection(navController: NavController) {
     var hasSongs = true
 
     songs.add(Song("Easy on me", "Adele", ""))
@@ -292,7 +292,7 @@ fun SongsSection() {
             )
 
             // Button
-            TextButton(onClick = { /* Do something! */ }) {
+            TextButton(onClick = { navController.navigate("edit-profile/songs") }) {
                 Text("Edit")
             }
         }

@@ -47,4 +47,13 @@ class UsersRepository {
             }
         }
     }
+
+    fun removeUserGenre(userUid: String?, genre: String) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("genres", FieldValue.arrayRemove(genre))
+            }
+        }
+    }
 }

@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -25,6 +27,8 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.csc780fall21.soulnareapplication.domain.model.*
 import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
+import com.csc780fall21.soulnareapplication.view.edit_profile.EditProfileViewModel
+import com.csc780fall21.soulnareapplication.view.edit_profile.EditProfileViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -36,7 +40,10 @@ fun ProfileScreen(
     profileViewModel: ProfileViewModel = viewModel(
         factory = ProfileViewModelFactory(UsersRepository())
     ),
-) {
+    editProfileViewModel: EditProfileViewModel = viewModel(
+        factory = EditProfileViewModelFactory(UsersRepository())
+    ),
+    ) {
     when (val userProfile = profileViewModel.userStateFlow.asStateFlow().collectAsState().value) {
         is OnError -> {
             Text(text = "Please try after sometime")
@@ -61,7 +68,7 @@ fun ProfileScreen(
                     backgroundColor =  MaterialTheme.colors.primarySurface,
                 )
                 ProfileSection(user)
-                GenresSection(navController, user)
+                GenresSection(navController, user, editProfileViewModel)
                 ArtistsSection()
                 SongsSection()
             }
@@ -85,7 +92,7 @@ fun ProfileSection(user : User?) {
             style = MaterialTheme.typography.h4
         )
 
-        /*
+        /**
          * Reference: https://coil-kt.github.io/coil/compose/
          */
         // profile picture
@@ -102,8 +109,9 @@ fun ProfileSection(user : User?) {
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
-fun GenresSection(navController: NavController, user : User?) {
+fun GenresSection(navController: NavController, user : User?, editProfileViewModel: EditProfileViewModel) {
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         Row(
             modifier = Modifier
@@ -134,6 +142,7 @@ fun GenresSection(navController: NavController, user : User?) {
                 items(user.genres) { genre ->
                     GenreChip(
                         genre = genre,
+                        editProfileViewModel = editProfileViewModel
                     )
                 }
             }
@@ -146,9 +155,11 @@ fun GenresSection(navController: NavController, user : User?) {
 /**
  * References: https://medium.com/@Rieger_san/create-a-chipgroup-with-jetpack-compose-f4744b94fa34
  */
+@ExperimentalCoroutinesApi
 @Composable
 fun GenreChip(
     genre: String,
+    editProfileViewModel: EditProfileViewModel
 ) {
     Surface(
         modifier = Modifier.padding(4.dp),
@@ -156,13 +167,21 @@ fun GenreChip(
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colors.primary
     ) {
-        Row {
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = genre,
                 style = MaterialTheme.typography.body2,
                 color = Color.White,
                 modifier = Modifier.padding(8.dp)
             )
+            IconButton(onClick = {
+                editProfileViewModel.deleteGenre(genre = genre)
+            }) {
+                Icon(Icons.Default.Clear, null)
+            }
         }
     }
 }

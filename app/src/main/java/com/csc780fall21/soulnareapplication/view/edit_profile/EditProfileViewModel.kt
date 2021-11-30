@@ -90,6 +90,11 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
         }
     }
 
+    fun deleteGenre(genre: String) {
+        val userUid = auth.currentUser?.uid
+        usersRepository.removeUserGenre(userUid = userUid, genre = genre)
+    }
+
     companion object {
         private const val CLIENT_ID = "94696a0bca7a4cf1bfcd41f4e23fae37"
         private const val CLIENT_SECRET = "3681684773fa43d281fe2cb0ef6af12e"

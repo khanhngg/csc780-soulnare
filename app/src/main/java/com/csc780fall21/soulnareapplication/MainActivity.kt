@@ -46,9 +46,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             SoulnareApplicationTheme() {
                 val navController = rememberNavController()
+                val currentRoute = currentRoute(navController)
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute(navController) != "edit-profile") {
+                        if (currentRoute != "edit-profile"
+                            && currentRoute != "register"
+                            && currentRoute != "login"
+                            && currentRoute != "auth"
+                        ) {
                             BottomNavigationBar(
                                 items = listOf(
                                     BottomNavItem(

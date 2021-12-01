@@ -213,7 +213,7 @@ fun ArtistsSection(navController: NavController, user : User?, editProfileViewMo
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.Start
             ) {
                 items(user.artists) { model ->
                     ArtistItem(model = model, editProfileViewModel = editProfileViewModel)

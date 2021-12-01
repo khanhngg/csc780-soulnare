@@ -93,7 +93,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
 
-    // Spotify
+    // Spotify Web API
     implementation("com.adamratzman:spotify-api-kotlin-core:3.8.4")
 
+    // Spotify SDK -- References: https://stackoverflow.com/questions/68656587/how-to-import-an-android-library-aar-as-a-module-with-android-studio-arctic-fox
+    implementation files('libs/spotify-app-remote-release-0.7.2.aar')
+
+    // Gson for Spotify SDK -- References: https://developer.spotify.com/documentation/android/quick-start/kotlin/
+    implementation "com.google.code.gson:gson:2.6.1"
 }

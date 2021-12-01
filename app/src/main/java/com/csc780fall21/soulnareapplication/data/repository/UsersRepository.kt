@@ -1,7 +1,5 @@
-package com.csc780fall21.soulnareapplication.domain.repository
+package com.csc780fall21.soulnareapplication.data.repository
 
-import android.util.Log
-import androidx.compose.animation.core.snap
 import com.csc780fall21.soulnareapplication.domain.model.OnError
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccess
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccessQuery

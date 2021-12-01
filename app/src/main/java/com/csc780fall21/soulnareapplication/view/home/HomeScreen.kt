@@ -28,7 +28,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.csc780fall21.soulnareapplication.domain.model.*
-import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
+import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
 import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModel
 import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,6 +1,5 @@
 package com.csc780fall21.soulnareapplication.view.profile
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -27,7 +26,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.csc780fall21.soulnareapplication.domain.model.*
-import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
+import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
 import com.csc780fall21.soulnareapplication.view.edit_profile.EditProfileViewModel
 import com.csc780fall21.soulnareapplication.view.edit_profile.EditProfileViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi

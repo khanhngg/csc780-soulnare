@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.csc780fall21.soulnareapplication.domain.model.User
-import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
+import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase

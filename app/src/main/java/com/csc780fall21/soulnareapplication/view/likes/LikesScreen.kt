@@ -135,38 +135,45 @@ fun LikesRow(model: User) {
                 .weight(0.5f)
                 .fillMaxHeight(),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            /**
-            * References: https://stackoverflow.com/questions/66671902/how-to-create-a-circular-outlined-button-with-jetpack-compose
-             */
-            // reject button
-            IconButton(onClick = {  },
-                modifier = Modifier
-                    .size(30.dp)
-                    .border(1.dp, MaterialTheme.colors.secondary, shape = CircleShape)
-            ) {
-                Icon(
-                    Icons.Default.ThumbDown,
-                    contentDescription = "Reject",
-                    tint = MaterialTheme.colors.secondary,
-                    modifier = Modifier.size(15.dp)
-                )
-            }
+            verticalAlignment = Alignment.CenterVertically,
 
-            // like button
-            IconButton(onClick = {  },
-                modifier = Modifier
-                    .padding(start = 20.dp)
-                    .size(30.dp)
-                    .border(1.dp, MaterialTheme.colors.primary, shape = CircleShape)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(0.4f),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    Icons.Default.ThumbUp,
-                    contentDescription = "Like",
-                    tint = MaterialTheme.colors.primary,
-                    modifier = Modifier.size(15.dp)
-                )
+                /**
+                * References: https://stackoverflow.com/questions/66671902/how-to-create-a-circular-outlined-button-with-jetpack-compose
+                 */
+                // reject button
+                FloatingActionButton(
+    //                onClick = { homeViewModel.addUserToYourRejects(user?.uid) },
+                    onClick = {},
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    contentColor = Color.White,
+                    modifier = Modifier.size(30.dp)
+                ){
+                    Icon(
+                        Icons.Filled.ThumbDown,
+                        "Reject",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+
+                // like button
+                FloatingActionButton(
+    //                onClick = { homeViewModel.addUserToYourRejects(user?.uid) },
+                    onClick = {},
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = Color.White,
+                    modifier = Modifier.size(30.dp)
+                ){
+                    Icon(
+                        Icons.Filled.ThumbUp,
+                        "LIke",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
             }
         }
     }

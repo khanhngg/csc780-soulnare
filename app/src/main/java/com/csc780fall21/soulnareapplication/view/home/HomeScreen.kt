@@ -1,23 +1,21 @@
 package com.csc780fall21.soulnareapplication.view.home
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +28,8 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.csc780fall21.soulnareapplication.domain.model.*
 import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
-import com.csc780fall21.soulnareapplication.view.edit_profile.EditProfileViewModel
+import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModel
+import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -39,40 +38,92 @@ import kotlinx.coroutines.flow.asStateFlow
 @Composable
 fun HomeScreen(
     navController: NavController,
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModelFactory(UsersRepository())
+    ),
     homeViewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(UsersRepository())
     ),
 ) {
-    when (val userProfiles = homeViewModel.usersStateFlow.asStateFlow().collectAsState().value) {
+    when(val currentUser = profileViewModel.userStateFlow.asStateFlow().collectAsState().value) {
         is OnError -> {
             Text(text = "Please try after sometime")
         }
 
-        is OnSuccessQuery -> {
-            val users = userProfiles.querySnapshot?.toObjects(User::class.java)
+        is OnSuccess -> {
+            val user = currentUser.documentSnapshot?.toObject(User::class.java)
+            val youLikeUserIds = user?.youLikeUserIds
+            val youRejectUserIds = user?.youRejectUserIds
 
-            Log.i("homescreen...", "users: ${users}")
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                floatingActionButton = { FloatingActionButtons() }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                ) {
-                    ProfileSection(user = users?.get(0))
-                    GenresSection(navController, user = users?.get(0))
-                    ArtistsSection(navController, user = users?.get(0))
-                    SongsSection(navController, user = users?.get(0))
+            when (val userProfiles = homeViewModel.usersStateFlow.asStateFlow().collectAsState().value) {
+                is OnError -> {
+                    Text(text = "Please try after sometime")
+                }
+
+                is OnSuccessQuery -> {
+                    val users = userProfiles.querySnapshot?.toObjects(User::class.java)
+                    val tempUsersToShow = mutableListOf<User>()
+                    users?.forEach {
+                        if (!youLikeUserIds?.contains(it.uid)!! && !youRejectUserIds?.contains(it.uid)!!) {
+                            tempUsersToShow.add(it)
+                        }
+                    }
+
+                    val usersToShow: List<User> by homeViewModel.usersToShow.observeAsState(mutableListOf())
+                    homeViewModel.updateUsersToShow(tempUsersToShow)
+
+                    if (usersToShow.isNotEmpty()) {
+                        Scaffold(
+                            modifier = Modifier.fillMaxSize(),
+                            floatingActionButton = {
+                                FloatingActionButtons(
+                                    homeViewModel = homeViewModel,
+                                    user = usersToShow[0],
+                                )
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState()),
+                            ) {
+                                ProfileSection(user = usersToShow[0])
+                                GenresSection(navController, user = usersToShow[0])
+                                ArtistsSection(navController, user = usersToShow[0])
+                                SongsSection(navController, user = usersToShow[0])
+                            }
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "No more matches today!",
+                                style = MaterialTheme.typography.h5,
+                                modifier = Modifier.padding(bottom = 20.dp)
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.VolunteerActivism,
+                                contentDescription = null,
+                                tint = Color(0xFFF9844A),
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
-fun FloatingActionButtons() {
+fun FloatingActionButtons(
+    homeViewModel: HomeViewModel,
+    user: User?
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,14 +132,14 @@ fun FloatingActionButtons() {
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         FloatingActionButton(
-            onClick = {},
+            onClick = { homeViewModel.addUserToYourRejects(user?.uid) },
             backgroundColor = MaterialTheme.colors.secondary,
             contentColor = Color.White
         ){
             Icon(Icons.Filled.ThumbDown,"Reject")
         }
         FloatingActionButton(
-            onClick = {},
+            onClick = { homeViewModel.addUserToYourLikes(user?.uid) },
             backgroundColor = MaterialTheme.colors.primary,
             contentColor = Color.White
         ){

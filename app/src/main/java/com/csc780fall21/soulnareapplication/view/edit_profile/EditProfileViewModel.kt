@@ -19,9 +19,6 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
 
     // Genres
-    private val _genres = MutableLiveData<List<String>>()
-    val genres: LiveData<List<String>> = _genres
-
     private val _genreQuery = MutableLiveData("")
     val genreQuery: LiveData<String> = _genreQuery
 

@@ -28,12 +28,12 @@ fun MessagesScreen(navController: NavController) {
     messages.add(Message("3","1", "Yo", "John", "Julia",  0))
     messages.add(Message("4", "1","Ayy", "David", "Julia", 0))
     messages.add(Message("5", "1","sup", "Barry", "Julia",  0))
-    messages.add(Message("6", "1","da hello", "Danny", "Julia",  0))
+    messages.add(Message("6", "1","Hi there!", "Danny", "Julia",  0))
     messages.add(Message("7", "1","heyyy", "Jason", "Julia",  0))
-    messages.add(Message("8", "1","da hello", "Danny", "Julia",  0))
-    messages.add(Message("9", "1","heyyy", "Jasonnn", "Julia",  0))
-    messages.add(Message("10", "1","da hello", "Joey", "Julia", 0))
-    messages.add(Message("11", "1","heyyy", "Brandon", "Julia",  0))
+    messages.add(Message("8", "1","hello", "Danny", "Julia",  0))
+    messages.add(Message("9", "1","heyyy", "Jules", "Julia",  0))
+    messages.add(Message("10", "1","hello there", "Joey", "Julia", 0))
+    messages.add(Message("11", "1","hey hey!", "Brandon", "Julia",  0))
 
     // current user
     val user = User("","Julia", "Goldberg", "", "", mutableListOf(),  mutableListOf(),  mutableListOf(),  mutableListOf())

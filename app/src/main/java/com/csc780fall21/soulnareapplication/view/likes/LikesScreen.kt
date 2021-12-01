@@ -1,5 +1,6 @@
 package com.csc780fall21.soulnareapplication.view.likes
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -8,48 +9,90 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.SentimentDissatisfied
+import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.csc780fall21.soulnareapplication.domain.model.OnError
+import com.csc780fall21.soulnareapplication.domain.model.OnSuccessQuery
 import com.csc780fall21.soulnareapplication.domain.model.User
+import com.csc780fall21.soulnareapplication.domain.repository.UsersRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.asStateFlow
 
+@ExperimentalCoroutinesApi
 @Composable
-fun LikesScreen(navController: NavController) {
-    val users = mutableListOf<User>()
+fun LikesScreen(
+    navController: NavController,
+    likesViewModel: LikesViewModel = viewModel(
+        factory = LikesViewModelFactory(UsersRepository())
+    )
+) {
+    when (val userProfiles = likesViewModel.usersStateFlow.asStateFlow().collectAsState().value) {
+        is OnError -> {
+            Text(text = "Please try after sometime")
+        }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopAppBar(
-            elevation = 4.dp,
-            title = {
-                Text("Likes")
-            },
-            backgroundColor =  MaterialTheme.colors.primarySurface,
-        )
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 12.dp,
-                top = 16.dp,
-                end = 12.dp,
-                bottom = 16.dp
-            ),
-        ) {
-            items(users) { user ->
-                LikesRow(user)
-                Divider(
-                    color = Color.LightGray,
-                    thickness = 1.dp,
+        is OnSuccessQuery -> {
+            val users = userProfiles.querySnapshot?.toObjects(User::class.java)
+            Column(modifier = Modifier.fillMaxSize()) {
+                TopAppBar(
+                    elevation = 4.dp,
+                    title = {
+                        Text("Likes")
+                    },
+                    backgroundColor =  MaterialTheme.colors.primarySurface,
                 )
+                if (users?.isNotEmpty() == true) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            start = 12.dp,
+                            top = 16.dp,
+                            end = 12.dp,
+                            bottom = 16.dp
+                        ),
+                    ) {
+                        items(users) { user ->
+                            LikesRow(user)
+                            Divider(
+                                color = Color.LightGray,
+                                thickness = 1.dp,
+                            )
+                        }
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "No likes yet!",
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.padding(bottom = 20.dp)
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.SentimentDissatisfied,
+                            contentDescription = null,
+                            tint = Color(0xFFF9844A),
+                            modifier = Modifier.size(50.dp)
+                        )
+                    }
+                }
             }
         }
     }
@@ -130,5 +173,19 @@ fun LikesRow(model: User) {
                 )
             }
         }
+    }
+}
+
+/**
+ * References: https://github.com/raipankaj/Bookish/blob/main/app/src/main/java/com/sample/jetbooks/MainActivity.kt
+ */
+@ExperimentalCoroutinesApi
+class LikesViewModelFactory(private val usersRepository: UsersRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LikesViewModel::class.java)) {
+            return LikesViewModel(usersRepository) as T
+        }
+
+        throw IllegalStateException()
     }
 }

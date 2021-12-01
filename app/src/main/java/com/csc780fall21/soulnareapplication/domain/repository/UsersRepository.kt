@@ -57,6 +57,29 @@ class UsersRepository {
         }
     }
 
+    fun getUserProfilesThatLikeYours(userUid: String?) = callbackFlow {
+        val collection = userUid?.let {
+            firestore
+                .collection("users")
+                .whereNotEqualTo("uid", userUid)
+                .whereArrayContains("youLikeUserIds", userUid)
+        }
+
+        val snapshotListener = collection?.addSnapshotListener { snapshot, error ->
+            val response = if (error == null) {
+                OnSuccessQuery(snapshot)
+            } else {
+                OnError(error)
+            }
+
+            trySend(response).isSuccess
+        }
+
+        awaitClose {
+            snapshotListener?.remove()
+        }
+    }
+
     fun createUserProfile(user: User) {
         val collection = firestore.collection("users")
         user.uid?.let { collection.document(it).set(user) }

@@ -9,10 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.SentimentDissatisfied
-import androidx.compose.material.icons.filled.VolunteerActivism
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -148,12 +145,12 @@ fun LikesRow(model: User) {
             IconButton(onClick = {  },
                 modifier = Modifier
                     .size(30.dp)
-                    .border(1.dp, Color.Red, shape = CircleShape)
+                    .border(1.dp, MaterialTheme.colors.secondary, shape = CircleShape)
             ) {
                 Icon(
-                    Icons.Default.Close,
+                    Icons.Default.ThumbDown,
                     contentDescription = "Reject",
-                    tint = Color.Red,
+                    tint = MaterialTheme.colors.secondary,
                     modifier = Modifier.size(15.dp)
                 )
             }
@@ -163,12 +160,12 @@ fun LikesRow(model: User) {
                 modifier = Modifier
                     .padding(start = 20.dp)
                     .size(30.dp)
-                    .border(1.dp, Color.Green, shape = CircleShape)
+                    .border(1.dp, MaterialTheme.colors.primary, shape = CircleShape)
             ) {
                 Icon(
-                    Icons.Default.Favorite,
+                    Icons.Default.ThumbUp,
                     contentDescription = "Like",
-                    tint = Color.Green,
+                    tint = MaterialTheme.colors.primary,
                     modifier = Modifier.size(15.dp)
                 )
             }

@@ -1,5 +1,6 @@
 package com.csc780fall21.soulnareapplication.view.home
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -71,7 +72,7 @@ fun HomeScreen(
 
                     val usersToShow: List<User> by homeViewModel.usersToShow.observeAsState(mutableListOf())
                     homeViewModel.updateUsersToShow(tempUsersToShow)
-
+                    Log.i("HomeScreen", "usersToShow: ${usersToShow}");
                     if (usersToShow.isNotEmpty()) {
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),

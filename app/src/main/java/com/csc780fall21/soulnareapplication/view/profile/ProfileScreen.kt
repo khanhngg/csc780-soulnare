@@ -135,7 +135,7 @@ fun GenresSection(navController: NavController, user : User?, editProfileViewMod
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.Start
             ) {
                 items(user.genres) { genre ->
                     GenreChip(

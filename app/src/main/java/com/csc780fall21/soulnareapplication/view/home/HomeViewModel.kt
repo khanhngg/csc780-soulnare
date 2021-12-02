@@ -24,6 +24,9 @@ class HomeViewModel(val usersRepository: UsersRepository) : ViewModel() {
 
     val usersStateFlow = MutableStateFlow<Response?>(null)
 
+    private var _currentSongPlaying = MutableLiveData("")
+    val currentSongPlaying: LiveData<String> = _currentSongPlaying
+
     init {
         viewModelScope.launch {
             usersRepository.getUserProfiles(auth.currentUser?.uid).collect {
@@ -57,5 +60,10 @@ class HomeViewModel(val usersRepository: UsersRepository) : ViewModel() {
             }
         }
         return newList
+    }
+
+    // Handle song playing
+    fun updateCurrentSongPlaying(currentSongPlaying: String?) {
+        _currentSongPlaying.value =  currentSongPlaying
     }
 }

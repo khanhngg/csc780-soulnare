@@ -7,9 +7,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ThumbDown
-import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.filled.VolunteerActivism
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +28,7 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.csc780fall21.soulnareapplication.domain.model.*
 import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
+import com.csc780fall21.soulnareapplication.data.services.SpotifyService
 import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModel
 import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -69,6 +69,7 @@ fun HomeScreen(
                             tempUsersToShow.add(it)
                         }
                     }
+                    val currentSong: String by homeViewModel.currentSongPlaying.observeAsState("")
 
                     val usersToShow: List<User> by homeViewModel.usersToShow.observeAsState(mutableListOf())
                     homeViewModel.updateUsersToShow(tempUsersToShow)
@@ -91,7 +92,7 @@ fun HomeScreen(
                                 ProfileSection(user = usersToShow[0])
                                 GenresSection(navController, user = usersToShow[0])
                                 ArtistsSection(navController, user = usersToShow[0])
-                                SongsSection(navController, user = usersToShow[0])
+                                SongsSection(navController, user = usersToShow[0], homeViewModel = homeViewModel, currentSong = currentSong)
                             }
                         }
                     } else {
@@ -290,7 +291,7 @@ fun ArtistItem(
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(10.dp, 0.dp),
+            .padding(end = 10.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -315,7 +316,7 @@ fun ArtistItem(
 @ExperimentalCoilApi
 @ExperimentalCoroutinesApi
 @Composable
-fun SongsSection(navController: NavController, user : User?) {
+fun SongsSection(navController: NavController, user : User?, homeViewModel: HomeViewModel, currentSong : String) {
     Column(modifier = Modifier.padding(10.dp, 15.dp)) {
         Row(
             modifier = Modifier
@@ -333,7 +334,7 @@ fun SongsSection(navController: NavController, user : User?) {
         // Content
         if (user!!.songs.isNotEmpty()) {
             user.songs.forEach { song ->
-                SongItem(model = song)
+                SongItem(model = song, homeViewModel = homeViewModel, currentSong = currentSong)
             }
         } else {
             Text(text = "No songs yet.")
@@ -344,35 +345,90 @@ fun SongsSection(navController: NavController, user : User?) {
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
-fun SongItem(model: Map<String, String>) {
+fun SongItem(
+    model: Map<String, String>,
+    currentSong: String,
+    homeViewModel: HomeViewModel,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val painter = rememberImagePainter(data = model["imageUrl"])
-        Image(
-            painter = painter,
-            contentDescription = "Album Cover Picture",
-            modifier = Modifier.size(100.dp)
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp, 0.dp),
-            verticalArrangement = Arrangement.Center,
+        Row(
+            modifier = Modifier.fillMaxWidth(0.9f),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = model["name"]!!,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
+
+            // Song album cover image
+            val painter = rememberImagePainter(data = model["imageUrl"])
+            Image(
+                painter = painter,
+                contentDescription = "Album Cover Picture",
+                modifier = Modifier.size(100.dp)
             )
-            Text(
-                text = model["artists"]!!,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Light
-            )
+
+            // Song name and artists
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp, 0.dp),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = model["name"]!!,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = model["artists"]!!,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light
+                )
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Play/pause buttons
+            Log.i("HomeScreen...songitem...", "currentSong")
+            if (currentSong == model["uri"]) {
+                FloatingActionButton(
+                    onClick =
+                    {
+                        SpotifyService.pause()
+                        homeViewModel.updateCurrentSongPlaying("")
+                    },
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    contentColor = Color.White,
+                    modifier = Modifier.size(30.dp)
+                ){
+                    Icon(
+                        Icons.Filled.Pause,
+                        "Pause",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+            } else {
+                FloatingActionButton(
+                    onClick =
+                    {
+                        SpotifyService.play(model["uri"])
+                        homeViewModel.updateCurrentSongPlaying(model["uri"])
+                    },
+                    backgroundColor = MaterialTheme.colors.primaryVariant,
+                    contentColor = Color.White,
+                    modifier = Modifier.size(30.dp)
+                ){
+                    Icon(
+                        Icons.Filled.PlayArrow,
+                        "Play",
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+            }
         }
     }
 }

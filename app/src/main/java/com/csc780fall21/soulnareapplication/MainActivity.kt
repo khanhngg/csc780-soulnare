@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
+import com.csc780fall21.soulnareapplication.data.services.SpotifyService
 import com.csc780fall21.soulnareapplication.ui.BottomNavItem
 import com.csc780fall21.soulnareapplication.ui.Navigation
 import com.csc780fall21.soulnareapplication.ui.theme.SoulnareApplicationTheme
@@ -80,6 +81,9 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 onItemClick = {
                                     navController.navigate(it.route)
+                                    if (it.route != "home") {
+                                        SpotifyService.pause()
+                                    }
                                 }
                             )
                         }
@@ -94,6 +98,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        SpotifyService.connect(this) {}
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SpotifyService.disconnect()
     }
 }
 

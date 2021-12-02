@@ -11,9 +11,6 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
  * - https://developer.spotify.com/documentation/android/quick-start/
  * - https://tolkiana.com/how-to-use-spotifys-sdk-in-kotlin/
  */
-enum class PlayingState {
-    PAUSED, PLAYING, STOPPED
-}
 
 /**
  * Singleton class to play music from Spotify
@@ -67,28 +64,11 @@ object SpotifyService {
     /**
      * Music player controls
      */
-    fun play(uri: String) {
+    fun play(uri: String?) {
         spotifyAppRemote?.playerApi?.play(uri)
-    }
-
-    fun resume() {
-        spotifyAppRemote?.playerApi?.resume()
     }
 
     fun pause() {
         spotifyAppRemote?.playerApi?.pause()
     }
-
-    fun playingState(handler: (PlayingState) -> Unit) {
-        spotifyAppRemote?.playerApi?.playerState?.setResultCallback { result ->
-            if (result.track.uri == null) {
-                handler(PlayingState.STOPPED)
-            } else if (result.isPaused) {
-                handler(PlayingState.PAUSED)
-            } else {
-                handler(PlayingState.PLAYING)
-            }
-        }
-    }
-
 }

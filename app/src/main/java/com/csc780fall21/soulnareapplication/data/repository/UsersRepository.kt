@@ -87,7 +87,7 @@ class UsersRepository {
         val collection = firestore.collection("users")
         userUid.let {
             if (it != null) {
-                collection.document(it).update("messages", FieldValue.arrayUnion(roomId))
+                collection.document(it).update("roomIds", FieldValue.arrayUnion(roomId))
             }
         }
     }

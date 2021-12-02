@@ -10,6 +10,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -242,16 +244,25 @@ fun ArtistItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val painter =
-                rememberImagePainter(data = model["imageUrl"]!!,
-                    builder = {
-                        transformations(CircleCropTransformation())
-                    })
-            Image(
-                painter = painter,
-                contentDescription = "Artist Picture",
-                modifier = Modifier.size(100.dp)
-            )
+            if (model["imageUrl"] == "") {
+                Icon(
+                    imageVector = Icons.Filled.Face,
+                    contentDescription = null,
+                    tint = Color(0xFFADB5BD),
+                    modifier = Modifier.size(100.dp)
+                )
+            } else {
+                val painter =
+                    rememberImagePainter(data = model["imageUrl"]!!,
+                        builder = {
+                            transformations(CircleCropTransformation())
+                        })
+                Image(
+                    painter = painter,
+                    contentDescription = "Artist Picture",
+                    modifier = Modifier.size(100.dp)
+                )
+            }
             Text(
                 text = model["name"]!!,
                 fontSize = 12.sp,

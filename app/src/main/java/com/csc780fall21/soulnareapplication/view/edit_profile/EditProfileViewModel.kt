@@ -1,5 +1,6 @@
 package com.csc780fall21.soulnareapplication.view.edit_profile
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -74,8 +75,13 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
 
             if (result.total > 0) {
                 val artists = mutableMapOf<String, String>()
+                Log.i("searchartists", "result..: ${result}")
                 result.forEach {
-                    artists[it!!.name] = it.images[0].url
+                    if (it?.images?.isEmpty() == true) {
+                        artists[it.name] = ""
+                    } else {
+                        artists[it!!.name] = it.images[0].url
+                    }
                 }
                 _artistSearchResults.value = artists
             } else {
@@ -103,11 +109,13 @@ class EditProfileViewModel(val usersRepository: UsersRepository) :ViewModel() {
                         artistNames.add(it.name)
                     }
 
+                    val imageUrl = if (song.album.images.isNotEmpty()) song.album.images[0].url else ""
+
                     songs[song.uri.uri] = mapOf(
                         "uri" to song.uri.uri,
                         "name" to song.name,
                         "artists" to artistNames.joinToString(),
-                        "imageUrl" to song.album.images[0].url,
+                        "imageUrl" to imageUrl,
                     )
                 }
                 _songSearchResults.value = songs

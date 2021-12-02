@@ -9,7 +9,7 @@ data class User(
     val genres: List<String> = mutableListOf(),
     val artists: List<Map<String, String>> = mutableListOf(),
     val songs: List<Map<String, String>> = mutableListOf(),
-    val messageIds: List<String> = mutableListOf(),
+    val roomIds: List<String> = mutableListOf(),
     val youLikeUserIds: List<String> = mutableListOf(),
     val youRejectUserIds: List<String> = mutableListOf(),
     val hideUserIds: List<String> = mutableListOf(),

@@ -84,8 +84,8 @@ fun Navigation(navController: NavHostController) {
                 MessagesScreen(navController)
             }
             // TODO - pass message id from view model???
-            composable("message") {
-                MessageScreen(navController)
+            composable("message/{roomId}") { backStackEntry ->
+                MessageScreen(navController = navController, roomId = backStackEntry.arguments?.getString("roomId"))
             }
         }
 

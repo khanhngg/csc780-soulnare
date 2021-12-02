@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.csc780fall21.soulnareapplication.data.repository.MessagesRepository
 import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
 import com.csc780fall21.soulnareapplication.domain.model.Response
 import com.csc780fall21.soulnareapplication.domain.model.User
@@ -16,13 +17,26 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
-class MessagesViewModel(val usersRepository: UsersRepository) : ViewModel() {
+class MessagesViewModel(
+    val usersRepository: UsersRepository,
+    val messagesRepository: MessagesRepository,
+) : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
 
-    private var _usersToShow = MutableLiveData(listOf<User>())
-    val usersToShow: LiveData<List<User>> = _usersToShow
-
     val usersStateFlow = MutableStateFlow<Response?>(null)
+
+    private val _message = MutableLiveData("")
+    val message: LiveData<String> = _message
+
+    private var _messages = MutableLiveData(emptyList<Map<String, Any>>().toMutableList())
+    val messages: LiveData<MutableList<Map<String, Any>>> = _messages
+
+    /**
+     * Update the message value as user types
+     */
+    fun updateMessage(message: String) {
+        _message.value = message
+    }
 
     init {
         viewModelScope.launch {
@@ -30,5 +44,17 @@ class MessagesViewModel(val usersRepository: UsersRepository) : ViewModel() {
                 usersStateFlow.value = it
             }
         }
+
+        getMessages()
+    }
+
+    fun getMessages() {
+
+    }
+
+    fun createRoom(otherUserId: String) {
+        val roomId = messagesRepository.createRoom()
+        usersRepository.addUserToRoom(auth.currentUser?.uid, roomId = roomId)
+        usersRepository.addUserToRoom(otherUserId, roomId = roomId)
     }
 }

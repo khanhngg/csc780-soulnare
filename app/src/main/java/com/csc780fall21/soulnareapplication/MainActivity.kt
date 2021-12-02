@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
                             && currentRoute != "register"
                             && currentRoute != "login"
                             && currentRoute != "auth"
+                            && currentRoute != "message"
                         ) {
                             BottomNavigationBar(
                                 items = listOf(

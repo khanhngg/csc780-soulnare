@@ -78,7 +78,7 @@ class RegisterViewModel(val usersRepository: UsersRepository) : ViewModel() {
                         genres = listOf(),
                         artists = listOf(),
                         songs = listOf(),
-                        messageIds = listOf(),
+                        roomIds = listOf(),
                         avatar = null,
                         youLikeUserIds = listOf(),
                         youRejectUserIds = listOf(),

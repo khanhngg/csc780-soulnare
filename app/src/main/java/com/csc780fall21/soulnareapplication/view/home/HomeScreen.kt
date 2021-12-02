@@ -1,6 +1,5 @@
 package com.csc780fall21.soulnareapplication.view.home
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -400,7 +399,6 @@ fun SongItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Play/pause buttons
-            Log.i("HomeScreen...songitem...", "currentSong")
             if (currentSong == model["uri"]) {
                 FloatingActionButton(
                     onClick =

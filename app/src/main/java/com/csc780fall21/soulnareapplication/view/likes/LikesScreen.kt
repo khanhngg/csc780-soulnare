@@ -22,12 +22,15 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.csc780fall21.soulnareapplication.data.repository.MessagesRepository
 import com.csc780fall21.soulnareapplication.domain.model.OnError
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccessQuery
 import com.csc780fall21.soulnareapplication.domain.model.User
 import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccess
 import com.csc780fall21.soulnareapplication.view.home.*
+import com.csc780fall21.soulnareapplication.view.messages.MessagesViewModel
+import com.csc780fall21.soulnareapplication.view.messages.MessagesViewModelFactory
 import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModel
 import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,6 +49,9 @@ fun LikesScreen(
     ),
     likesViewModel: LikesViewModel = viewModel(
         factory = LikesViewModelFactory(UsersRepository())
+    ),
+    messagesViewModel: MessagesViewModel = viewModel(
+        factory = MessagesViewModelFactory(UsersRepository(), MessagesRepository())
     )
 ) {
     when(val currentUser = profileViewModel.userStateFlow.asStateFlow().collectAsState().value) {
@@ -95,7 +101,7 @@ fun LikesScreen(
                                 ),
                             ) {
                                 items(usersToShow) { user ->
-                                    LikesRow(user, homeViewModel)
+                                    LikesRow(user, homeViewModel, messagesViewModel)
                                     Divider(
                                         color = Color.LightGray,
                                         thickness = 1.dp,
@@ -133,7 +139,8 @@ fun LikesScreen(
 @Composable
 fun LikesRow(
     user: User,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    messagesViewModel: MessagesViewModel
 ) {
     Row(
         modifier = Modifier
@@ -200,14 +207,18 @@ fun LikesRow(
 
                 // like button
                 FloatingActionButton(
-                    onClick = { homeViewModel.addUserToYourRejects(user.uid) },
+                    onClick =
+                    {
+                        homeViewModel.addUserToYourLikes(user.uid)
+                        user.uid?.let { messagesViewModel.createRoom(it) }
+                    },
                     backgroundColor = MaterialTheme.colors.primary,
                     contentColor = Color.White,
                     modifier = Modifier.size(30.dp)
                 ){
                     Icon(
                         Icons.Filled.ThumbUp,
-                        "LIke",
+                        "Like",
                         modifier = Modifier.size(15.dp)
                     )
                 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,6 +25,7 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.csc780fall21.soulnareapplication.data.repository.MessagesRepository
 import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
 import com.csc780fall21.soulnareapplication.domain.model.*
 import com.csc780fall21.soulnareapplication.view.home.HomeViewModel
@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.asStateFlow
 fun MessagesScreen(
     navController: NavController,
     messagesViewModel: MessagesViewModel = viewModel(
-        factory = MessagesViewModelFactory(UsersRepository())
+        factory = MessagesViewModelFactory(UsersRepository(), MessagesRepository())
     ),
     profileViewModel: ProfileViewModel = viewModel(
         factory = ProfileViewModelFactory(UsersRepository())
@@ -64,6 +64,7 @@ fun MessagesScreen(
             val user = currentUser.documentSnapshot?.toObject(User::class.java)
             val youLikeUserIds = user?.youLikeUserIds
             val youRejectUserIds = user?.youRejectUserIds
+            val yourRoomIds = user?.roomIds
 
             when (val userProfiles = likesViewModel.usersStateFlow.asStateFlow().collectAsState().value) {
                 is OnError -> {
@@ -82,6 +83,20 @@ fun MessagesScreen(
                     val usersToShow: List<User> by homeViewModel.usersToShow.observeAsState(mutableListOf())
                     homeViewModel.updateUsersToShow(tempUsersToShow)
 
+                    val otherUserIdToRoom = mutableMapOf<String, String>()
+                    usersToShow.forEach { userToShow ->
+                        userToShow.roomIds.forEach { roomId ->
+                            if (yourRoomIds?.contains(roomId) == true) {
+                                userToShow.uid?.let { otherUserIdToRoom.put(it, roomId) }
+                            }
+                        }
+                    }
+
+                    val message: String by messagesViewModel.message.observeAsState(initial = "")
+                    val messages: List<Map<String, Any>> by messagesViewModel.messages.observeAsState(
+                        initial = emptyList<Map<String, Any>>().toMutableList()
+                    )
+
                     Column(modifier = Modifier.fillMaxSize()) {
                         TopAppBar(
                             elevation = 4.dp,
@@ -90,7 +105,6 @@ fun MessagesScreen(
                             },
                             backgroundColor =  MaterialTheme.colors.primarySurface,
                         )
-                        // TODO
                         if (usersToShow.isNotEmpty()) {
                             LazyColumn(
                                 modifier = Modifier
@@ -103,7 +117,7 @@ fun MessagesScreen(
                                 ),
                             ) {
                                 items(usersToShow) { user ->
-                                    MessageRow(user, navController)
+                                    MessageRow(user, navController, otherUserIdToRoom[user.uid])
                                     Divider(
                                         color = Color.LightGray,
                                         thickness = 1.dp,
@@ -140,13 +154,14 @@ fun MessagesScreen(
 @Composable
 fun MessageRow(
     user: User,
-    navController: NavController
+    navController: NavController,
+    roomId: String?
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 10.dp)
-            .clickable { navController.navigate("message") },
+            .clickable { navController.navigate("message/${roomId}") },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // profile picture
@@ -186,10 +201,10 @@ fun MessageRow(
  * References: https://github.com/raipankaj/Bookish/blob/main/app/src/main/java/com/sample/jetbooks/MainActivity.kt
  */
 @ExperimentalCoroutinesApi
-class MessagesViewModelFactory(private val usersRepository: UsersRepository) : ViewModelProvider.Factory {
+class MessagesViewModelFactory(private val usersRepository: UsersRepository, private val messagesRepository: MessagesRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MessagesViewModel::class.java)) {
-            return MessagesViewModel(usersRepository) as T
+            return MessagesViewModel(usersRepository, messagesRepository) as T
         }
 
         throw IllegalStateException()

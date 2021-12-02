@@ -83,6 +83,15 @@ class UsersRepository {
         user.uid?.let { collection.document(it).set(user) }
     }
 
+    fun addUserToRoom(userUid: String?, roomId: String) {
+        val collection = firestore.collection("users")
+        userUid.let {
+            if (it != null) {
+                collection.document(it).update("messages", FieldValue.arrayUnion(roomId))
+            }
+        }
+    }
+
     fun addUserGenre(userUid: String?, newGenre: String) {
         val collection = firestore.collection("users")
         userUid.let {

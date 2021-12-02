@@ -8,5 +8,5 @@ This Android application is written in Kotlin.
 // TODO
 
 ## Screenshots/Demo
-<img src="demo/soulnare-1.gif" height="300">
+<img src="demo/soulnare-1.gif" height="500">
 

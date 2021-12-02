@@ -1,16 +1,16 @@
 package com.csc780fall21.soulnareapplication.view.likes
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,74 +19,108 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.csc780fall21.soulnareapplication.domain.model.OnError
 import com.csc780fall21.soulnareapplication.domain.model.OnSuccessQuery
 import com.csc780fall21.soulnareapplication.domain.model.User
 import com.csc780fall21.soulnareapplication.data.repository.UsersRepository
+import com.csc780fall21.soulnareapplication.domain.model.OnSuccess
+import com.csc780fall21.soulnareapplication.view.home.*
+import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModel
+import com.csc780fall21.soulnareapplication.view.profile.ProfileViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
 
+@ExperimentalCoilApi
 @ExperimentalCoroutinesApi
 @Composable
 fun LikesScreen(
     navController: NavController,
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModelFactory(UsersRepository())
+    ),
+    homeViewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(UsersRepository())
+    ),
     likesViewModel: LikesViewModel = viewModel(
         factory = LikesViewModelFactory(UsersRepository())
     )
 ) {
-    when (val userProfiles = likesViewModel.usersStateFlow.asStateFlow().collectAsState().value) {
+    when(val currentUser = profileViewModel.userStateFlow.asStateFlow().collectAsState().value) {
         is OnError -> {
             Text(text = "Please try after sometime")
         }
 
-        is OnSuccessQuery -> {
-            val users = userProfiles.querySnapshot?.toObjects(User::class.java)
-            Column(modifier = Modifier.fillMaxSize()) {
-                TopAppBar(
-                    elevation = 4.dp,
-                    title = {
-                        Text("Likes")
-                    },
-                    backgroundColor =  MaterialTheme.colors.primarySurface,
-                )
-                if (users?.isNotEmpty() == true) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            start = 12.dp,
-                            top = 16.dp,
-                            end = 12.dp,
-                            bottom = 16.dp
-                        ),
-                    ) {
-                        items(users) { user ->
-                            LikesRow(user)
-                            Divider(
-                                color = Color.LightGray,
-                                thickness = 1.dp,
-                            )
+        is OnSuccess -> {
+            val user = currentUser.documentSnapshot?.toObject(User::class.java)
+            val youLikeUserIds = user?.youLikeUserIds
+            val youRejectUserIds = user?.youRejectUserIds
+
+            when (val userProfiles = likesViewModel.usersStateFlow.asStateFlow().collectAsState().value) {
+                is OnError -> {
+                    Text(text = "Please try after sometime")
+                }
+
+                is OnSuccessQuery -> {
+                    val usersThatLikeYou = userProfiles.querySnapshot?.toObjects(User::class.java)
+                    val tempUsersToShow = mutableListOf<User>()
+                    usersThatLikeYou?.forEach {
+                        if (!youLikeUserIds?.contains(it.uid)!! && !youRejectUserIds?.contains(it.uid)!!) {
+                            tempUsersToShow.add(it)
                         }
                     }
-                } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "No likes yet!",
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.padding(bottom = 20.dp)
+
+                    val usersToShow: List<User> by homeViewModel.usersToShow.observeAsState(mutableListOf())
+                    homeViewModel.updateUsersToShow(tempUsersToShow)
+
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        TopAppBar(
+                            elevation = 4.dp,
+                            title = {
+                                Text("Likes")
+                            },
+                            backgroundColor =  MaterialTheme.colors.primarySurface,
                         )
-                        Icon(
-                            imageVector = Icons.Filled.SentimentDissatisfied,
-                            contentDescription = null,
-                            tint = Color(0xFFF9844A),
-                            modifier = Modifier.size(50.dp)
-                        )
+                        if (usersToShow.isNotEmpty()) {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                contentPadding = PaddingValues(
+                                    start = 12.dp,
+                                    top = 16.dp,
+                                    end = 12.dp,
+                                    bottom = 16.dp
+                                ),
+                            ) {
+                                items(usersToShow) { user ->
+                                    LikesRow(user, homeViewModel)
+                                    Divider(
+                                        color = Color.LightGray,
+                                        thickness = 1.dp,
+                                    )
+                                }
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "No likes yet!",
+                                    style = MaterialTheme.typography.h5,
+                                    modifier = Modifier.padding(bottom = 20.dp)
+                                )
+                                Icon(
+                                    imageVector = Icons.Filled.SentimentDissatisfied,
+                                    contentDescription = null,
+                                    tint = Color(0xFFF9844A),
+                                    modifier = Modifier.size(50.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -94,8 +128,13 @@ fun LikesScreen(
     }
 }
 
+@ExperimentalCoilApi
+@ExperimentalCoroutinesApi
 @Composable
-fun LikesRow(model: User) {
+fun LikesRow(
+    user: User,
+    homeViewModel: HomeViewModel
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -122,7 +161,7 @@ fun LikesRow(model: User) {
             )
 
             // name
-            model.firstName?.let {
+            user.firstName?.let {
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
                     text = it
@@ -147,8 +186,7 @@ fun LikesRow(model: User) {
                  */
                 // reject button
                 FloatingActionButton(
-    //                onClick = { homeViewModel.addUserToYourRejects(user?.uid) },
-                    onClick = {},
+                    onClick = { homeViewModel.addUserToYourRejects(user.uid) },
                     backgroundColor = MaterialTheme.colors.secondary,
                     contentColor = Color.White,
                     modifier = Modifier.size(30.dp)
@@ -162,8 +200,7 @@ fun LikesRow(model: User) {
 
                 // like button
                 FloatingActionButton(
-    //                onClick = { homeViewModel.addUserToYourRejects(user?.uid) },
-                    onClick = {},
+                    onClick = { homeViewModel.addUserToYourRejects(user.uid) },
                     backgroundColor = MaterialTheme.colors.primary,
                     contentColor = Color.White,
                     modifier = Modifier.size(30.dp)

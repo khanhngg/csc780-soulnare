@@ -19,8 +19,10 @@ import kotlinx.coroutines.launch
 class HomeViewModel(val usersRepository: UsersRepository) : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
 
-    private var _usersToShow = MutableLiveData(listOf<User>())
-    val usersToShow: LiveData<List<User>> = _usersToShow
+    private var _usersToShow = MutableLiveData(mutableListOf<User>())
+    val usersToShow: LiveData<MutableList<User>> = _usersToShow
+
+    val currentUserToShow = MutableStateFlow(User())
 
     val usersStateFlow = MutableStateFlow<Response?>(null)
 
@@ -35,24 +37,27 @@ class HomeViewModel(val usersRepository: UsersRepository) : ViewModel() {
         }
     }
 
-    fun updateUsersToShow(newUsersToShow: List<User>) {
+    fun updateUsersToShow(newUsersToShow: MutableList<User>) {
         _usersToShow.value = newUsersToShow
+        if (newUsersToShow.size > 0) {
+            currentUserToShow.value = newUsersToShow[0]
+        } else {
+            currentUserToShow.value = User(uid = null)
+        }
     }
 
     fun addUserToYourLikes(otherUserUid: String?) {
         val userUid = auth.currentUser?.uid
         usersRepository.addUserToLikes(userUid = userUid, otherUserUid = otherUserUid)
-        updateUsersToShow(filterOutUsersToShow(otherUserUid = otherUserUid))
     }
 
     fun addUserToYourRejects(otherUserUid: String?) {
         val userUid = auth.currentUser?.uid
         usersRepository.addUserToReject(userUid = userUid, otherUserUid = otherUserUid)
-        updateUsersToShow(filterOutUsersToShow(otherUserUid = otherUserUid))
     }
 
-    private fun filterOutUsersToShow(otherUserUid: String?): MutableList<User> {
-        val oldList = usersToShow.value
+    fun filterOutUsersToShow(otherUserUid: String?): MutableList<User> {
+        val oldList = _usersToShow.value
         val newList = mutableListOf<User>()
         oldList?.forEach {
             if (it.uid !== otherUserUid) {

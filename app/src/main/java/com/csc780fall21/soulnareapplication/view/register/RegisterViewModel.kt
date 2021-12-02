@@ -82,6 +82,7 @@ class RegisterViewModel(val usersRepository: UsersRepository) : ViewModel() {
                         avatar = null,
                         youLikeUserIds = listOf(),
                         youRejectUserIds = listOf(),
+                        hideUserIds = listOf(),
                         likeUserIds = listOf(),
                     )
                     usersRepository.createUserProfile(user = user)

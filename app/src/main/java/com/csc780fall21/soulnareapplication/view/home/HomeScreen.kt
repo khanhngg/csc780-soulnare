@@ -15,7 +15,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,16 +70,16 @@ fun HomeScreen(
                     }
                     val currentSong: String by homeViewModel.currentSongPlaying.observeAsState("")
 
-                    val usersToShow: List<User> by homeViewModel.usersToShow.observeAsState(mutableListOf())
                     homeViewModel.updateUsersToShow(tempUsersToShow)
-                    Log.i("HomeScreen", "usersToShow: ${usersToShow}");
-                    if (usersToShow.isNotEmpty()) {
+
+                    val currentUserToShow: User by homeViewModel.currentUserToShow.asStateFlow().collectAsState()
+                    if (currentUserToShow.uid != null) {
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),
                             floatingActionButton = {
                                 FloatingActionButtons(
                                     homeViewModel = homeViewModel,
-                                    user = usersToShow[0],
+                                    user = currentUserToShow,
                                 )
                             }
                         ) {
@@ -89,10 +88,10 @@ fun HomeScreen(
                                     .fillMaxSize()
                                     .verticalScroll(rememberScrollState()),
                             ) {
-                                ProfileSection(user = usersToShow[0])
-                                GenresSection(navController, user = usersToShow[0])
-                                ArtistsSection(navController, user = usersToShow[0])
-                                SongsSection(navController, user = usersToShow[0], homeViewModel = homeViewModel, currentSong = currentSong)
+                                ProfileSection(user = currentUserToShow)
+                                GenresSection(navController, user = currentUserToShow)
+                                ArtistsSection(navController, user = currentUserToShow)
+                                SongsSection(navController, user = currentUserToShow, homeViewModel = homeViewModel, currentSong = currentSong)
                             }
                         }
                     } else {
@@ -134,14 +133,22 @@ fun FloatingActionButtons(
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         FloatingActionButton(
-            onClick = { homeViewModel.addUserToYourRejects(user?.uid) },
+            onClick =
+            {
+                homeViewModel.addUserToYourRejects(user?.uid)
+                homeViewModel.updateUsersToShow(homeViewModel.filterOutUsersToShow(user?.uid))
+            },
             backgroundColor = MaterialTheme.colors.secondary,
             contentColor = Color.White
         ){
             Icon(Icons.Filled.ThumbDown,"Reject")
         }
         FloatingActionButton(
-            onClick = { homeViewModel.addUserToYourLikes(user?.uid) },
+            onClick =
+            {
+                homeViewModel.addUserToYourLikes(user?.uid)
+                homeViewModel.updateUsersToShow(homeViewModel.filterOutUsersToShow(user?.uid))
+            },
             backgroundColor = MaterialTheme.colors.primary,
             contentColor = Color.White
         ){

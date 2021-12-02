@@ -12,6 +12,7 @@ data class User(
     val messageIds: List<String> = mutableListOf(),
     val youLikeUserIds: List<String> = mutableListOf(),
     val youRejectUserIds: List<String> = mutableListOf(),
+    val hideUserIds: List<String> = mutableListOf(),
     val likeUserIds: List<String> = mutableListOf(),
 ) {
     companion object {

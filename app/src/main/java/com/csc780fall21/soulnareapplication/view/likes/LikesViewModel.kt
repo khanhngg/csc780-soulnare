@@ -32,7 +32,4 @@ class LikesViewModel(val usersRepository: UsersRepository) : ViewModel() {
         }
     }
 
-    fun updateUsersToShow(newUsersToShow: List<User>) {
-        _usersToShow.value = newUsersToShow
-    }
 }
